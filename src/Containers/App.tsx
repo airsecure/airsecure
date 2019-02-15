@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 import RootContainer from './RootContainer'
 import configureStore from '../Redux/configureStore'
+import MainActions from '../Redux/MainRedux'
 
 import Textile from '@textile/react-native-sdk'
 
@@ -21,6 +22,9 @@ class App extends Component {
 
   componentWillMount () {
     this.textile.setup()
+  }
+  componentDidMount() {
+    store.dispatch(MainActions.startup())
   }
 
   componentWillUnmount () {

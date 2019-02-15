@@ -7,7 +7,7 @@ import NavigationService from '../Navigation/Service'
 import styles from './Styles'
 
 class App extends Component<{}> {
-
+  
   render () {
     const barStyle = Platform.OS === 'ios' ? 'dark-content' : 'light-content'
     return (
