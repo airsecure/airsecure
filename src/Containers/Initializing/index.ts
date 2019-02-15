@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
-import { View, Text, ViewStyle } from 'react-native'
-import MainActions, { MainState } from '../../redux'
+import { View, Text } from 'react-native'
 
 type Props = {}
 
