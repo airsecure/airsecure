@@ -17,7 +17,7 @@ interface StateProps {
 
 interface DispatchProps {
   scanNewQRCode: () => void
-  fakeToggle: (index: number) => void
+  fakeToggle: (secret: string) => void
 }
 
 interface ScreenState {
@@ -73,7 +73,6 @@ class Home extends Component<Props> {
     return con.substring(0, 2)
   }
   renderRow = ({item, index}) => {
-    console.log("CODY ITEM: " + item)
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
     const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
@@ -84,12 +83,12 @@ class Home extends Component<Props> {
         style={rowStyles.appCell}
         activeOpacity={0.98}
         /* tslint:disable-next-line jsx-no-lambda */
-        onPress={() => { this.props.fakeToggle(index) }}
+        onPress={() => { this.props.fakeToggle(item.secret) }}
       >
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
             <View style={rowStyles.iconBox}>
-              <Text style={rowStyles.logoText}>{this.getShort(item.name).toLocaleUpperCase()}</Text>
+              <Text style={rowStyles.logoText}>{this.getShort(item.issuer).toLocaleUpperCase()}</Text>
             </View>
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
@@ -153,7 +152,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
     scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
-    fakeToggle: (index: number) => dispatch(MainActions.fakeToggle(index))
+    fakeToggle: (secret: string) => dispatch(MainActions.fakeToggle(secret))
   }
 }
 
