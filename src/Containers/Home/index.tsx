@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { View, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native'
 import ProgressBarAnimated from 'react-native-progress-bar-animated'
 import NavigationService from '../../Navigation/Service'
-import MainActions from '../../Redux/MainRedux'
+import MainActions, { AuthenticatedApp } from '../../Redux/MainRedux'
 import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
 import rowStyles from '../Styles/row'
@@ -12,7 +12,7 @@ import { ThreadFilesInfo } from '@textile/react-native-sdk'
 import { materialColors } from 'react-native-typography'
 
 interface StateProps {
-  apps: ReadonlyArray<ThreadFilesInfo>
+  apps: ReadonlyArray<AuthenticatedApp>
 }
 
 interface DispatchProps {
