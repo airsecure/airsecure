@@ -19,7 +19,24 @@
       "secret": {
         "description": "The Base32 encoded random bytes secret key",
         "type": "string"
+      },
+      "algorithm": {
+        "type": "string",
+        "description": "Hash algorithm"
+      },
+      "digits": {
+        "type": "string",
+        "description": "The digits parameter may have the values 6 or 8, and determines how long of a one-time passcode to display to the user. The default is 6."
+      },
+      "counter": {
+        "type": "string",
+        "description": "The counter parameter is required when provisioning a key for use with HOTP. It will set the initial counter value."
+      },
+      "period": {
+        "type": "string",
+        "description": "The period parameter defines a period that a TOTP code will be valid for, in seconds. The default value is 30."
       }
-    }
+    },
+    "required": ["user", "secret"]
   }
 }

@@ -35,6 +35,7 @@ class Scanner extends Component<Props> {
           onRead={this.onSuccess}
           topContent={<Text>Scan barcode</Text>}
           cameraProps={{ captureAudio: false }}
+          showMarker={ true }
           bottomContent={
             <TouchableOpacity
               // tslint:disable-next-line:jsx-no-lambda
