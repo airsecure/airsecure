@@ -4,15 +4,18 @@ import {
   TextStyle,
   TouchableOpacity,
   View,
-  ViewStyle
+  ViewStyle,
+  ImageStyle
 } from 'react-native'
+
+import { material, materialColors } from 'react-native-typography'
 
 interface Style {
   applicationView: ViewStyle
   container: ViewStyle
-  main: ViewStyle
-  closeButton: ViewStyle
-  closeText: TextStyle
+  header: TextStyle
+  scanButton: ViewStyle
+  scanIcon: ImageStyle
 }
 
 const styles = StyleSheet.create<Style>({
@@ -21,17 +24,31 @@ const styles = StyleSheet.create<Style>({
   },
   container: {
     flex: 1,
-    backgroundColor: 'white'
-  },
-  main: {
     backgroundColor: 'white',
-    flex: 1
+    padding: 40
   },
-  closeButton: {
-    zIndex: 3
+  header: {
+    ...material.display2Object,
+    color: materialColors.blackPrimary,
+    marginTop: 40,
+    alignSelf: 'center'
   },
-  closeText: {
-    fontSize: 48
+  scanButton: {
+    position: 'absolute',
+    bottom: 60,
+    height: 70,
+    width: 70,
+    borderRadius: 40,
+    backgroundColor: materialColors.blackPrimary,
+    zIndex: 3,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center'
+  },
+  scanIcon: {
+    height: 30,
+    width: 30
   }
 })
 

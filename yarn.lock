@@ -4701,6 +4701,10 @@ react-native-typescript-transformer@^1.2.11:
     semver "^5.4.1"
     source-map "^0.5.6"
 
+react-native-typography@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.4.0.tgz#166b79c618075882d8af07720649f5bc6523160d"
+
 react-native@^0.57.2:
   version "0.57.8"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.57.8.tgz#1a840fbe144cd3902cc14313a783ce28efc48cb9"
