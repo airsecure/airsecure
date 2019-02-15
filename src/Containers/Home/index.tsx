@@ -17,7 +17,7 @@ interface StateProps {
 
 interface DispatchProps {
   scanNewQRCode: () => void
-  fakeToggle: (secret: string) => void
+  toggleCode: (secret: string) => void
 }
 
 interface ScreenState {
@@ -86,7 +86,7 @@ class Home extends Component<Props> {
         style={rowStyles.appCell}
         activeOpacity={0.98}
         /* tslint:disable-next-line jsx-no-lambda */
-        onPress={() => { this.props.fakeToggle(item.secret) }}
+        onPress={() => { this.props.toggleCode(item.secret) }}
       >
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
@@ -155,7 +155,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
     scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
-    fakeToggle: (secret: string) => dispatch(MainActions.fakeToggle(secret))
+    toggleCode: (secret: string) => dispatch(MainActions.toggleCode(secret))
   }
 }
 
