@@ -5,7 +5,7 @@ import { NavigationContainerComponent } from 'react-navigation'
 import AppNavigation from '../Navigation'
 import NavigationService from '../Navigation/Service'
 
-class App extends Component {
+class App extends Component<{}> {
 
   render () {
     const barStyle = Platform.OS === 'ios' ? 'dark-content' : 'light-content'
