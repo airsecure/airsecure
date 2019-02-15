@@ -8,7 +8,7 @@ const actions = {
     return (appThread?: ThreadInfo) => resolve({ appThread })
   }),
   getAppsSuccess: createAction('GET_APPS_SUCCESS', (resolve) => {
-    return (authenticatedApps: ReadonlyArray<ThreadFilesInfo>) => resolve({ authenticatedApps })
+    return (authenticatedApps: ReadonlyArray<AuthenticatedApp>) => resolve({ authenticatedApps })
   }),
   scanNewQRCode: createAction('SCAN_NEW_QR_CODE'),
   scanNewQRCodeSuccess: createAction('SCAN_NEW_QR_CODE_SUCCESS', (resolve) => {
@@ -23,39 +23,23 @@ const actions = {
 }
 export type MainActions = ActionType<typeof actions>
 
+export interface AuthenticatedApp {
+  issuer: string
+  logoUrl: string
+  user: string
+  hide?: boolean
+  code?: string
+  seconds?: number
+}
+
 export interface MainState {
-  fakeApps: any[]
   appThread?: ThreadInfo
-  authenticatedApps: ReadonlyArray<ThreadFilesInfo>
+  authenticatedApps: ReadonlyArray<AuthenticatedApp>
   scanning: boolean
   error?: Error
 }
 
 const initialState: MainState = {
-  fakeApps: [{
-    name: 'Textile Photos',
-    url: 'textile.io',
-    username: 'andrew@textile.io',
-    hide: false,
-    code: undefined,
-    seconds: 0
-  },
-  {
-    name: 'Coinbase',
-    url: 'coinbase.com',
-    username: 'andrew.hill@gmail.com',
-    hide: false,
-    code: undefined,
-    seconds: 0
-  },
-  {
-    name: 'GitHub',
-    url: 'github.com',
-    username: 'andrewxhill',
-    hide: false,
-    code: undefined,
-    seconds: 0
-  }],
   authenticatedApps: [],
   scanning: false
 }
@@ -64,12 +48,12 @@ export function reducer(state = initialState, action: MainActions) {
   switch (action.type) {
     case getType(actions.fakeToggle): {
       const {index} = action.payload
-      const updatedFake = state.fakeApps.map((a, i) => {
+      const updatedApps = state.authenticatedApps.map((a, i) => {
         if (i === index) {
           return {
-            name: a.name,
+            issuer: a.issuer,
             url: a.url,
-            username: a.username,
+            user: a.user,
             hide: !a.hide,
             code: a.code ? undefined : '429589',
             seconds: a.code ? 30 : 0
@@ -77,11 +61,11 @@ export function reducer(state = initialState, action: MainActions) {
         }
         return a
       })
-      return { ...state, fakeApps: updatedFake }
+      return { ...state, authenticatedApps: updatedApps }
     }
     case getType(actions.updateSeconds):
       const {index, seconds} = action.payload
-      const updatedFake = state.fakeApps.map((a, i) => {
+      const updatedFake = state.authenticatedApps.map((a, i) => {
         if (i === index) {
           return {
             ...a,
@@ -105,7 +89,7 @@ export function reducer(state = initialState, action: MainActions) {
 }
 
 export const MainSelectors = {
-  getItemByIndex: (state: RootState, index: number) => state.main.fakeApps[index],
+  getItemByIndex: (state: RootState, index: number) => state.main.authenticatedApps[index],
   getAppThread: (state: RootState) => state.main.appThread
 }
 export default actions

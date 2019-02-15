@@ -1,10 +1,11 @@
-import { takeLatest, call, put, select, delay } from 'redux-saga/effects'
+import { takeLatest, call, put, select, delay, all } from 'redux-saga/effects'
 import { ActionType } from 'typesafe-actions'
 import MainActions, {MainSelectors} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
+import { Buffer } from 'buffer'
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
@@ -12,19 +13,6 @@ export function* mainSagaInit() {
   yield takeLatest('SCAN_NEW_QR_CODE_SUCCESS', parseNewCode)
   yield takeLatest('GET_APP_THREAD_SUCCESS', getAuthenticatedApps)
   yield takeLatest('FAKE_TOGGLE', handleFakeCountdown)
-}
-
-interface CompanySearch {
-  name: string,
-  domain: string,
-  logo: string
-}
-export function * getDomain (name: string) {
-  const companies: CompanySearch[] = yield fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?query=${name}`)
-    .then((response) => response.json())
-  if (companies.length) {
-    return companies[0]
-  }
 }
 
 export function * handleFakeCountdown(action: ActionType<typeof MainActions.fakeToggle>) {
@@ -58,9 +46,14 @@ export function * nodeStarted() {
 export function * getAuthenticatedApps(action: ActionType<typeof MainActions.getThreadSuccess>) {
   if (action.payload.appThread) {
     const target = action.payload.appThread
-    const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '0', 100, target.id)
-    console.log("CODY: " + JSON.stringify(blocks))
-    yield put(MainActions.getAppsSuccess(blocks))
+    const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
+    const files = yield all(blocks.map((block) => {
+      return call(Textile.fileData, block.files[0].file.hash)
+    }))
+    const apps = files.map(file => {
+      return JSON.parse(Buffer.from(file.url.split(',')[1], 'base64').toString())
+    })
+    yield put(MainActions.getAppsSuccess(apps))
   }
 }
 
@@ -83,28 +76,18 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   var file = url.query
   file["user"] = label[1]
 
-  let company = yield call(getDomain, file.issuer)
-  if(company){
-    file["logoUrl"] = company.logo
-  }
-
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {
-   const success = yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
-   if (success) {
-     const result = yield call(Textile.prepareFilesAsync, path, appThread.id)
-     console.log("CODY result: " + JSON.stringify(result))
-     yield call(RNFS.unlink, path)
+   yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
+   const result = yield call(Textile.prepareFilesAsync, path, appThread.id)
+   yield call(RNFS.unlink, path)
 
-     const dir = result.dir
-     if (!dir) {
-       console.log("CODY ERROR")
-       return
-     }
-     const blockInfo = yield call(Textile.addThreadFiles, dir, appThread.id)
-     console.log("CODY: " + blockInfo)
+   const dir = result.dir
+   if (!dir) {
+     return
    }
+   yield call(Textile.addThreadFiles, dir, appThread.id)
   } catch (err) {
-    console.log("CODY: " + err.message)
+    console.log("CODY ERR: " + err.message)
   }
 }

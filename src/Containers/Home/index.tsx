@@ -13,7 +13,6 @@ import { materialColors } from 'react-native-typography'
 
 interface StateProps {
   apps: ReadonlyArray<ThreadFilesInfo>
-  fakeApps: any[]
 }
 
 interface DispatchProps {
@@ -41,6 +40,7 @@ class Home extends Component<Props> {
     NavigationService.navigate('Scanner')
   }
   renderRow = ({item, index}) => {
+    console.log("CODY ITEM: " + item)
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
     const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
@@ -69,8 +69,8 @@ class Home extends Component<Props> {
             }
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
-            <Text style={rowStyles.appName}>{item.name}</Text>
-            <Text style={rowStyles.userName}>{item.username}</Text>
+            <Text style={rowStyles.appName}>{item.issuer}</Text>
+            <Text style={rowStyles.userName}>{item.user}</Text>
           </View>
           <View style={rowStyles.mainRowRightColumn}>
             <Text style={rowStyles.toggleRow}>{toggleIcon}</Text>
@@ -105,7 +105,7 @@ class Home extends Component<Props> {
       <View style={styles.container}>
         <Text style={styles.header}>AirSecure</Text>
         <FlatList
-          data={this.props.fakeApps}
+          data={this.props.apps}
           renderItem={this.renderRow}
         />
         <TouchableOpacity
@@ -123,8 +123,7 @@ class Home extends Component<Props> {
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  apps: state.main.authenticatedApps,
-  fakeApps: state.main.fakeApps
+  apps: state.main.authenticatedApps
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
