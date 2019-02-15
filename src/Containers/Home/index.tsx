@@ -130,10 +130,10 @@ class Home extends Component<Props> {
     return (
       <View style={styles.container}>
         <Text style={styles.header}>AirSecure</Text>
-        <FlatList
+        {this.props.apps && <FlatList
           data={this.props.apps}
           renderItem={this.renderRow}
-        />
+        />}
         <TouchableOpacity
           onPress={this.scanNew}
           style={styles.scanButton}
