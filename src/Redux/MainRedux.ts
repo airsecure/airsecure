@@ -14,11 +14,15 @@ const actions = {
   scanNewQRCodeExit: createAction('SCAN_NEW_QR_CODE_EXIT'),
   scanNewQRCodeError: createAction('SCAN_NEW_QR_CODE_ERROR', (resolve) => {
     return (error: Error) => resolve({ error })
+  }),
+  fakeToggle: createAction('FAKE_TOGGLE', (resolve) => {
+    return (index: number) => resolve({ index })
   })
 }
 export type MainActions = ActionType<typeof actions>
 
 export interface MainState {
+  fakeApps: any[]
   appThread?: ThreadInfo
   authenticatedApps: ReadonlyArray<ThreadFilesInfo>
   scanning: boolean
@@ -26,12 +30,52 @@ export interface MainState {
 }
 
 const initialState: MainState = {
+  fakeApps: [{
+    name: 'Textile Photos',
+    url: 'textile.io',
+    username: 'andrew@textile.io',
+    hide: false,
+    code: undefined,
+    seconds: 0
+  },
+  {
+    name: 'Coinbase',
+    url: 'coinbase.com',
+    username: 'andrew.hill@gmail.com',
+    hide: false,
+    code: undefined,
+    seconds: 0
+  },
+  {
+    name: 'GitHub',
+    url: 'github.com',
+    username: 'andrewxhill',
+    hide: false,
+    code: undefined,
+    seconds: 0
+  }],
   authenticatedApps: [],
   scanning: false
 }
 
 export function reducer(state = initialState, action: MainActions) {
   switch (action.type) {
+    case getType(actions.fakeToggle):
+      const {index} = action.payload
+      const updatedFake = state.fakeApps.map((a, i) => {
+        if (i === index) {
+          return {
+            name: a.name,
+            url: a.url,
+            username: a.username,
+            hide: !a.hide,
+            code: a.code ? undefined : '429589',
+            seconds: 23
+          }
+        }
+        return a
+      })
+      return { ...state, fakeApps: updatedFake }
     case getType(actions.getThreadSuccess):
       return { ...state, appThread: action.payload.appThread }
     case getType(actions.getAppsSuccess):

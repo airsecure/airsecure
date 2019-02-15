@@ -31,7 +31,6 @@ export function * getAuthenticatedApps(action: ActionType<typeof MainActions.get
 
 /* all just expl below */
 
-
 // function that makes the api request and returns a Promise for response
 export function * doSomething() {
   return true

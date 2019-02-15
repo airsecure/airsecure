@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
 import MainActions, { MainState } from '../../Redux/MainRedux'
 import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
+import rowStyles from '../Styles/row'
 import { ThreadFilesInfo } from '@textile/react-native-sdk'
 
 interface StateProps {
@@ -14,6 +15,7 @@ interface StateProps {
 
 interface DispatchProps {
   scanNewQRCode: () => void
+  fakeToggle: (index: number) => void
 }
 
 type Props = StateProps & DispatchProps
@@ -21,30 +23,37 @@ type Props = StateProps & DispatchProps
 class Home extends Component<Props> {
   state = {  }
 
-  renderRow = () => {
+  renderRow = ({item, index}) => {
+    const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
+    const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     return (
-      <View style={styles.appCell}>
-        <View style={styles.visibleRow}>
-          <View style={styles.leftColumn}>
+      <TouchableOpacity
+        style={rowStyles.appCell}
+        {/* tslint:disable-next-line jsx-no-lambda */}
+        onPress={() => { this.props.fakeToggle(index) }}
+      >
+        <View style={rowStyles.mainRow}>
+          <View style={rowStyles.mainRowLeftColumn}>
             <Image
-              style={styles.appIcon}
-              source={require('../../Static/Images/scan.png')}
+              style={rowStyles.appIcon}
+              source={{uri: `http://logo.clearbit.com/${item.url}?size=40`}}
             />
           </View>
-          <View style={styles.middleColumn}>
-            <Text style={styles.appName}></Text>
-            <Text style={styles.userName}></Text>
+          <View style={rowStyles.mainRowMiddleColumn}>
+            <Text style={rowStyles.appName}>{item.name}</Text>
+            <Text style={rowStyles.userName}>{item.username}</Text>
           </View>
-          <View style={styles.rightColumn}>
-            <Text style={styles.userName}>^</Text>
+          <View style={rowStyles.mainRowRightColumn}>
+            <Text style={rowStyles.toggleRow}>{toggleIcon}</Text>
           </View>
         </View>
-        <View style={styles.hiddenRow}>
-          <Text style={styles.code}>458 418</Text>
-          <Text style={styles.seconds}>16s</Text>
+        <View style={codeColumn}>
+          <View style={rowStyles.spacer}><Text>.</Text></View>
+          <Text style={rowStyles.code}>{item.code}</Text>
+          <Text style={rowStyles.seconds}/>
         </View>
-        <View style={styles.progressRow}/>>
-      </View>
+        <View style={rowStyles.progressRow}/>
+      </TouchableOpacity>
     )
   }
   render() {
@@ -71,16 +80,13 @@ class Home extends Component<Props> {
 
 const mapStateToProps = (state: RootState): StateProps => ({
   apps: state.main.authenticatedApps,
-  fakeApps: [{
-    name: 'Textile Photos',
-    logo: 'https://some-photo',
-    username: 'andrew@textile.io'
-  }]
+  fakeApps: state.main.fakeApps
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
-    scanNewQRCode: () => dispatch(MainActions.scanNewQRCode())
+    scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
+    fakeToggle: (index: number) => dispatch(MainActions.fakeToggle(index))
   }
 }
 

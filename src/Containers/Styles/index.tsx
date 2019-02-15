@@ -8,7 +8,7 @@ import {
   ImageStyle
 } from 'react-native'
 
-import { material, materialColors } from 'react-native-typography'
+import { material, materialColors, systemWeights } from 'react-native-typography'
 
 interface Style {
   applicationView: ViewStyle
@@ -28,9 +28,11 @@ const styles = StyleSheet.create<Style>({
     padding: 40
   },
   header: {
-    ...material.display2Object,
+    ...systemWeights.bold,
     color: materialColors.blackPrimary,
+    fontSize: 40,
     marginTop: 40,
+    marginBottom: 50,
     alignSelf: 'center'
   },
   scanButton: {

@@ -1,6 +1,7 @@
 {
   "name": "airsecure",
   "version": "0.0.1",
+  "license": "MIT",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "tsc": "tsc -p . --noEmit",
