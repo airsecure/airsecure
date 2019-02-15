@@ -1,0 +1,64 @@
+{
+  "name": "airsecure",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+    "tsc": "tsc -p . --noEmit"
+  },
+  "dependencies": {
+    "@textile/react-native-sdk": "1.1.0-rc14",
+    "otp-client": "^1.0.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-native": "^0.57.2",
+    "react-native-background-fetch": "^2.4.3",
+    "react-native-background-timer": "2.1.0-alpha.6",
+    "react-native-camera": "^1.10.2",
+    "react-native-circle": "^0.0.2",
+    "react-native-fs": "^2.11.17",
+    "react-native-navigation": "^2.11.0",
+    "react-native-qrcode-scanner": "^1.1.2",
+    "react-navigation": "^3.2.3",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.1",
+    "typesafe-actions": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.0",
+    "@types/react": "^16.8.3",
+    "@types/react-native": "^0.57.36",
+    "@types/react-native-background-timer": "^2.0.0",
+    "@types/react-native-fs": "^2.8.2",
+    "@types/react-native-push-notification": "^3.0.3",
+    "@types/react-native-qrcode": "^0.2.2",
+    "@types/react-navigation": "^3.0.2",
+    "@types/react-test-renderer": "^16.0.3",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "24.1.0",
+    "jest": "24.1.0",
+    "metro-react-native-babel-preset": "0.51.1",
+    "react-native-typescript-transformer": "^1.2.11",
+    "react-test-renderer": "16.6.3",
+    "typescript": "^3.3.3"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testPathIgnorePatterns": [
+      "\\.snap$",
+      "<rootDir>/node_modules/"
+    ],
+    "cacheDirectory": ".jest/cache"
+  }
+}
