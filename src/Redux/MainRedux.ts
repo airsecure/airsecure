@@ -105,6 +105,7 @@ export function reducer(state = initialState, action: MainActions) {
 }
 
 export const MainSelectors = {
-  getItemByIndex: (state: RootState, index: number) => state.main.fakeApps[index]
+  getItemByIndex: (state: RootState, index: number) => state.main.fakeApps[index],
+  getAppThread: (state: RootState) => state.main.appThread
 }
 export default actions

@@ -51,6 +51,26 @@ export function * getAuthenticatedApps(action: ActionType<typeof MainActions.get
 
 // worker saga: makes the api call when watcher saga sees the action
 export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCodeSuccess>) {
-  const url = parseUrl(action.payload.url)
-  console.log("CODY HEY: " + url.host)
+  const appThread = yield select(MainSelectors.getAppThread)
+
+  let url = parseUrl(action.payload.url, true)
+  let label = url.pathname.slice(1).split(':')
+  var file = url.query
+  file["user"] = label[1]
+
+  const path = RNFS.DocumentDirectoryPath + fakeUUID() + '.json'
+  try {
+   const success = yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
+   if (success) {
+     const result = yield call(Textile.prepareFilesAsync, path, appThread.id)
+     const dir = result.dir
+     if (!dir) {
+       return
+     }
+     const blockInfo = yield call(Textile.addThreadFiles, dir, appThread.id)
+     console.log(blockInfo)
+   }
+  } catch (err) {
+    console.log(err.message)
+  }
 }
