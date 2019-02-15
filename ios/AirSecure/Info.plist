@@ -4,6 +4,8 @@
   <dict>
     <key>NSCameraUsageDescription</key>
     <string>We need the camera to read your QR codes</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We don't need your microphone, this shouldn't show up</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>

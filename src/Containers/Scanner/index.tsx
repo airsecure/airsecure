@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import MainActions, { MainState } from '../../Redux/MainRedux'
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { RootAction } from '../../Redux/Types'
+import NavigationService from '../../Navigation/Service'
 import styles from '../Styles'
 
 interface StateProps {
@@ -35,9 +36,12 @@ class Scanner extends Component<Props> {
               Go to wikipedia.org/wiki/QR_code on your computer and scan the QR code.
           </Text>
           }
+          cameraProps={{ captureAudio: false }}
           bottomContent={
-            <TouchableOpacity>
-              <Text>OK. Got it!</Text>
+            <TouchableOpacity
+              onPress={() => { NavigationService.navigate('Home') }}
+            >
+              <Text>Close</Text>
             </TouchableOpacity>
           }
         />
