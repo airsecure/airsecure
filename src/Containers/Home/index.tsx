@@ -39,6 +39,36 @@ class Home extends Component<Props> {
   scanNew = () => {
     NavigationService.navigate('Scanner')
   }
+
+  getShort(name: string) {
+    const nm = name.toLowerCase().trim()
+    if (nm.length < 3) {
+      return nm
+    }
+    const parts = nm.split(' ')
+    if (parts.length > 1) {
+      return parts[0].substring(0, 1) + parts[1].substring(0, 1)
+    }
+
+    const con = nm.replace(/[aeiou]/ig, '')
+    if (con.length === 2) {
+      return con
+    }
+
+    if (con.length < 2) {
+      return nm.substring(0, 2)
+    }
+    if (nm.length % 2 === 0) {
+      const x = nm.substring(0, 1)
+      const y = nm.substring((nm.length / 2), 1 + (nm.length / 2))
+      const go1 = x === 'a' || x === 'e' || x === 'i' || x === 'o' || x === 'u'
+      const go2 = y === 'a' || y === 'e' || y === 'i' || y === 'o' || y === 'u'
+      if (!go1 && !go2) {
+        return x + y
+      }
+    }
+    return con.substring(0, 2)
+  }
   renderRow = ({item, index}) => {
     console.log("CODY ITEM: " + item)
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
@@ -49,24 +79,15 @@ class Home extends Component<Props> {
     return (
       <TouchableOpacity
         style={rowStyles.appCell}
+        activeOpacity={0.98}
         /* tslint:disable-next-line jsx-no-lambda */
         onPress={() => { this.props.fakeToggle(index) }}
       >
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
-            {item.logo &&
-              <Image
-                style={rowStyles.appIcon}
-                source={{uri: `http://logo.clearbit.com/${item.url}?size=40`}}
-              />
-            }
-            {
-              !item.logo &&
-              <Image
-                style={rowStyles.appIcon}
-                source={require('../../Static/Images/unknown.png')}
-              />
-            }
+            <View style={rowStyles.iconBox}>
+              <Text style={rowStyles.logoText}>{this.getShort(item.name).toLocaleUpperCase()}</Text>
+            </View>
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
             <Text style={rowStyles.appName}>{item.issuer}</Text>

@@ -4,6 +4,7 @@ import MainActions, {MainSelectors} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
+import * as COMPANIES from '../companies.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
 
