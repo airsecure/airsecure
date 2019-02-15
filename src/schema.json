@@ -35,6 +35,10 @@
       "period": {
         "type": "string",
         "description": "The period parameter defines a period that a TOTP code will be valid for, in seconds. The default value is 30."
+      },
+      "logoUrl": {
+        "type": "string",
+        "description": "Logo of account"
       }
     },
     "required": ["user", "secret"]
