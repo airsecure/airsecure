@@ -16,20 +16,21 @@ export function* mainSagaInit() {
   yield takeLatest('TOGGLE_CODE', handleCountdown)
 }
 
+function getToken(item) {
+  const otp = new OTP(item.secret, { algorithm: item.algorithm || 'sha1', digits: item.digits || 6, period: item.period || 30})
+  return '' + otp.getToken()
+}
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {
   const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)
-  console.log('axh here', item.secret)
   if (!item) {
     return
   }
   let seconds = item.seconds
   let code = item.code
-  if (item.code && seconds === 0) {
+  if (!item.code || seconds === 0) {
     seconds = 30
 
-    const otp = new OTP(item.secret, { algorithm: item.algorithm || 'sha1', digits: item.digits || 6, period: item.period || 30})
-    console.log("CODY TOKEN: " + otp.getToken())
-    code = '' + otp.getToken()
+    code = yield call(getToken, item)
 
     yield put(MainActions.updateCode(action.payload.secret, code, 30))
   }
@@ -67,7 +68,7 @@ function * refreshThreads(target: ThreadInfo) {
 export function * getAuthenticatedApps(action: ActionType<typeof MainActions.getThreadSuccess>) {
   if (action.payload.appThread) {
     const target = action.payload.appThread
-    refreshThreads(target)
+    yield call(refreshThreads, target)
   }
 }
 
@@ -101,7 +102,7 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
      return
    }
    yield call(Textile.addThreadFiles, dir, appThread.id)
-   refreshThreads(appThread)
+   yield call(refreshThreads, appThread)
   } catch (err) {
     console.log("CODY ERR: " + err.message)
   }
