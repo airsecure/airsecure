@@ -25,7 +25,7 @@ class Home extends Component<Props> {
   state = {  }
 
   scanNew = () => {
-    NavigationService.navigate('Home')
+    NavigationService.navigate('Scanner')
   }
   renderRow = ({item, index}) => {
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
