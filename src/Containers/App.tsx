@@ -4,13 +4,14 @@ import RootContainer from './RootContainer'
 import configureStore from '../Redux/configureStore'
 import MainActions from '../Redux/MainRedux'
 
-import Textile from '@textile/react-native-sdk'
+import Textile, {Events as TextileEvents} from '@textile/react-native-sdk'
 
 const { store } = configureStore()
 
 class App extends Component {
 
   textile = Textile
+  events = new TextileEvents()
 
   render () {
     return (
@@ -21,10 +22,13 @@ class App extends Component {
   }
 
   componentWillMount () {
+    this.events.addListener('newNodeState', (payload) => {
+      if (payload.state === 'started') {
+        store.dispatch(MainActions.nodeStarted())
+      }
+      console.info('axh @textile/newNodeState', payload.state)
+    })
     this.textile.setup()
-  }
-  componentDidMount() {
-    store.dispatch(MainActions.startup())
   }
 
   componentWillUnmount () {

@@ -3,11 +3,12 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { View, Text, TouchableOpacity } from 'react-native'
 import MainActions, { MainState } from '../../Redux/MainRedux'
-import { RootAction } from '../../Redux/Types'
+import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
+import { ThreadFilesInfo } from '@textile/react-native-sdk'
 
 interface StateProps {
-  accounts: []
+  apps: ThreadFilesInfo[]
 }
 
 interface DispatchProps {
@@ -33,8 +34,8 @@ class Home extends Component<Props> {
   }
 }
 
-const mapStateToProps = (state: MainState): StateProps => ({
-  accounts: []
+const mapStateToProps = (state: RootState): StateProps => ({
+  apps: state.main.authenticatedApps
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
