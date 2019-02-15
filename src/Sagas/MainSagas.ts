@@ -4,6 +4,7 @@ import MainActions, {MainSelectors} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
+import * as COMPANIES from '../companies.json'
 import * as RNFS from 'react-native-fs'
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
@@ -20,11 +21,6 @@ interface CompanySearch {
   logo: string
 }
 export function * getDomain (name: string) {
-  const companies: CompanySearch[] = yield fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?query=${name}`)
-    .then((response) => response.json())
-  if (companies.length) {
-    return companies[0]
-  }
 }
 
 export function * handleFakeCountdown(action: ActionType<typeof MainActions.fakeToggle>) {

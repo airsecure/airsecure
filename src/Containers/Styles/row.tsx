@@ -16,7 +16,8 @@ interface Style {
   appCell: ViewStyle
   mainRow: ViewStyle
   mainRowLeftColumn: ViewStyle
-  appIcon: ImageStyle
+  iconBox: ViewStyle
+  logoText: TextStyle
   mainRowMiddleColumn: ViewStyle
   appName: TextStyle
   userName: TextStyle
@@ -45,13 +46,25 @@ const styles = StyleSheet.create<Style>({
   },
   mainRowLeftColumn: {
     flex: 0.2,
-    alignContent: 'flex-start',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center'
   },
-  appIcon: {
-    height: 30,
-    width: 30
+  iconBox: {
+    height: 50,
+    width: 50,
+    borderWidth: 1,
+    borderColor: materialColors.blackSecondary,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  logoText: {
+    ...material.display2Object,
+    color: materialColors.blackPrimary,
+    textAlign: 'left',
+    lineHeight: RF(3.8),
+    fontSize: RF(3.6),
+    zIndex: 3
   },
   mainRowMiddleColumn: {
     flex: 0.7,
