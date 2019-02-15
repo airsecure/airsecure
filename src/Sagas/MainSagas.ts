@@ -7,6 +7,7 @@ import * as JSON_SCHEMA from '../schema.json'
 import * as COMPANIES from '../companies.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
+import OTP from 'otp-client'
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
@@ -17,19 +18,25 @@ export function* mainSagaInit() {
 }
 
 export function * handleFakeCountdown(action: ActionType<typeof MainActions.fakeToggle>) {
-  const item = yield select(MainSelectors.getItemByIndex, action.payload.index)
+  const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)
   if (!item) {
     return
   }
   let seconds = item.seconds
+  let code = item.code
   if (item.code && seconds === 0) {
-    yield put(MainActions.updateSeconds(action.payload.index, 30))
     seconds = 30
+
+    const otp = new OTP(item.secret, { algorithm: item.algorithm || 'sha1', digits: item.digits || 6, period: item.period || 30})
+    console.log("CODY TOKEN: " + otp.getToken())
+    code = '' + otp.getToken()
+
+    yield put(MainActions.updateCode(action.payload.secret, code, 30))
   }
   while (seconds > 0) {
     yield delay(1000)
     seconds -= 1
-    yield put(MainActions.updateSeconds(action.payload.index, seconds))
+    yield put(MainActions.updateCode(action.payload.secret, code, seconds))
   }
 }
 

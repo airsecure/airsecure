@@ -15,10 +15,13 @@ const actions = {
     return (url: string) => resolve({ url })
   }),
   fakeToggle: createAction('FAKE_TOGGLE', (resolve) => {
-    return (index: number) => resolve({ index })
+    return (secret: string) => resolve({ secret })
   }),
-  updateSeconds: createAction('UPDATE_COUNTDOWN_SECONDS', (resolve) => {
-    return (index: number, seconds: number) => resolve({ index, seconds })
+  updateCode: createAction('UPDATE_CODE', (resolve) => {
+    return (index: number, code: string, seconds: number) => {
+      console.log("CODY CODE: " + code)
+      return resolve({ index, code, seconds })
+    }
   })
 }
 export type MainActions = ActionType<typeof actions>
@@ -27,7 +30,8 @@ export interface AuthenticatedApp {
   issuer: string
   logoUrl: string
   user: string
-  hide?: boolean
+  secret: string
+  hidden?: boolean
   code?: string
   seconds?: number
 }
@@ -47,15 +51,16 @@ const initialState: MainState = {
 export function reducer(state = initialState, action: MainActions) {
   switch (action.type) {
     case getType(actions.fakeToggle): {
-      const {index} = action.payload
-      const updatedApps = state.authenticatedApps.map((a, i) => {
-        if (i === index) {
+      const {secret} = action.payload
+      const updatedApps = state.authenticatedApps.map((a) => {
+        if (a.secret === secret) {
           return {
             issuer: a.issuer,
-            url: a.url,
+            logoUrl: a.logoUrl,
+            secret: a.secret,
             user: a.user,
-            hide: !a.hide,
-            code: a.code ? undefined : '429589',
+            hidden: !a.hidden,
+            code: a.code,
             seconds: a.code ? 30 : 0
           }
         }
@@ -63,12 +68,13 @@ export function reducer(state = initialState, action: MainActions) {
       })
       return { ...state, authenticatedApps: updatedApps }
     }
-    case getType(actions.updateSeconds):
-      const {index, seconds} = action.payload
+    case getType(actions.updateCode):
+      const {index, code, seconds} = action.payload
       const updatedFake = state.authenticatedApps.map((a, i) => {
         if (i === index) {
           return {
             ...a,
+            code,
             seconds
           }
         }
@@ -89,7 +95,7 @@ export function reducer(state = initialState, action: MainActions) {
 }
 
 export const MainSelectors = {
-  getItemByIndex: (state: RootState, index: number) => state.main.authenticatedApps[index],
+  getItemBySecret: (state: RootState, secret: string) => state.main.authenticatedApps.find(item => item.secret === secret),
   getAppThread: (state: RootState) => state.main.appThread
 }
 export default actions
