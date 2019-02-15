@@ -9,7 +9,7 @@ import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
 import rowStyles from '../Styles/row'
 import { ThreadFilesInfo } from '@textile/react-native-sdk'
-import { materialColors } from 'react-native-typography';
+import { materialColors } from 'react-native-typography'
 
 interface StateProps {
   apps: ReadonlyArray<ThreadFilesInfo>
@@ -85,7 +85,7 @@ class Home extends Component<Props> {
               height={3}
               width={barWidth}
               maxWidth={barWidth}
-              value={ 100 * Number(item.seconds) / 30.0 }
+              value={100 * Number(item.seconds) / 30.0}
           />
         </View>
       </TouchableOpacity>

@@ -1,6 +1,6 @@
 import { createAction, ActionType, getType } from 'typesafe-actions'
 import { ThreadInfo, ThreadFilesInfo } from '@textile/react-native-sdk'
-import { RootState } from './Types';
+import { RootState } from './Types'
 
 const actions = {
   nodeStarted: createAction('NODE_STARTED'),
