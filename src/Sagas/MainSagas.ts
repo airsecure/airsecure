@@ -13,6 +13,19 @@ export function* mainSagaInit() {
   yield takeLatest('FAKE_TOGGLE', handleFakeCountdown)
 }
 
+interface CompanySearch {
+  name: string,
+  domain: string,
+  logo: string
+}
+export function * getDomain (name: string) {
+  const companies: CompanySearch[] = yield fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?query=${name}`)
+    .then((response) => response.json())
+  if (companies.length) {
+    return companies[0]
+  }
+}
+
 export function * handleFakeCountdown(action: ActionType<typeof MainActions.fakeToggle>) {
   const item = yield select(MainSelectors.getItemByIndex, action.payload.index)
   if (!item) {
