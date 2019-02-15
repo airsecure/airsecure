@@ -1,24 +1,27 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { View, Text, ViewStyle, TouchableOpacity } from 'react-native'
-import MainActions, { MainState } from '../../redux'
+import { View, Text, TouchableOpacity } from 'react-native'
+import MainActions, { MainState } from '../../Redux/MainRedux'
+import { RootAction } from '../../Redux/Types'
+import styles from '../Styles'
 
-type Props = {}
-type StateProps = {
+interface StateProps {
   accounts: []
 }
 
 interface DispatchProps {
-  search: () => void
+  scanNewQRCode: () => void
 }
+
+type Props = StateProps & DispatchProps
 
 class Home extends Component<Props> {
   state = {  }
 
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <Text>This should be a list of your Apps to auth</Text>
         <TouchableOpacity
           onPress={this.props.scanNewQRCode}
@@ -34,10 +37,9 @@ const mapStateToProps = (state: MainState): StateProps => ({
   accounts: []
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<MainActions>): DispatchProps => {
+const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
-    search: () => dispatch(MainActions.apiCallRequest()),
-    scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
+    scanNewQRCode: () => dispatch(MainActions.scanNewQRCode())
   }
 }
 

@@ -1,22 +1,30 @@
 import React, { Component } from 'react'
-import Redux, { Dispatch } from 'redux'
-import { View, StatusBar, Platform, PermissionsAndroid, Text } from 'react-native'
-import { NavigationContainerComponent } from 'react-navigation'
-import AppNavigation from '../Navigation'
-import NavigationService from '../Navigation/Service'
+import { Provider } from 'react-redux'
+import RootContainer from './RootContainer'
+import configureStore from '../Redux/configureStore'
 
-class App extends Component<{}> {
+import Textile from '@textile/react-native-sdk'
+
+const { store } = configureStore()
+
+class App extends Component {
+
+  textile = Textile
 
   render () {
-    const barStyle = Platform.OS === 'ios' ? 'dark-content' : 'light-content'
     return (
-      <View>
-        <StatusBar barStyle={barStyle} />
-        <AppNavigation
-          ref={(navRef: NavigationContainerComponent) => { NavigationService.setTopLevelNavigator(navRef) }}
-        />
-      </View>
+      <Provider store={store}>
+          <RootContainer />
+      </Provider>
     )
+  }
+
+  componentWillMount () {
+    this.textile.setup()
+  }
+
+  componentWillUnmount () {
+    this.textile.tearDown()
   }
 }
 

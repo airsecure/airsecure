@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest",
-    "tsc": "tsc -p . --noEmit"
+    "tsc": "tsc -p . --noEmit",
+    "lint": "tslint -c tslint.json --project ."
   },
   "dependencies": {
     "@textile/react-native-sdk": "1.1.0-rc14",
@@ -22,10 +22,13 @@
     "react-navigation": "^3.2.3",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
+    "redux-persist": "^5.10.0",
     "redux-saga": "^1.0.1",
     "typesafe-actions": "^3.0.0"
   },
   "devDependencies": {
+    "@types/enzyme": "^3.1.14",
+    "@types/enzyme-adapter-react-16": "^1.0.3",
     "@types/jest": "^24.0.0",
     "@types/react": "^16.8.3",
     "@types/react-native": "^0.57.36",
@@ -34,14 +37,21 @@
     "@types/react-native-push-notification": "^3.0.3",
     "@types/react-native-qrcode": "^0.2.2",
     "@types/react-navigation": "^3.0.2",
+    "@types/react-redux": "^6.0.9",
     "@types/react-test-renderer": "^16.0.3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "24.1.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.6.0",
     "jest": "24.1.0",
-    "metro-react-native-babel-preset": "0.51.1",
+    "metro-react-native-babel-preset": "0.48.0",
+    "react-dom": "^16.5.2",
     "react-native-typescript-transformer": "^1.2.11",
     "react-test-renderer": "16.6.3",
-    "typescript": "^3.3.3"
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^3.2.4"
   },
   "jest": {
     "preset": "react-native",
