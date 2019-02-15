@@ -14,7 +14,7 @@ const nav = createSwitchNavigator(
     Scanner
   },
   {
-    initialRouteName: 'Scanner'
+    initialRouteName: 'Home'
   }
 )
 

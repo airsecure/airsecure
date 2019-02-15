@@ -6,7 +6,7 @@ import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, Schema
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
   yield takeLatest('NODE_STARTED', nodeStarted)
-  yield takeLatest('SCAN_NEW_QR_CODE', scanNewQRCode)
+  yield takeLatest('SCAN_NEW_QR_CODE_SUCCESS', parseNewCode)
   yield takeLatest('GET_APP_THREAD_SUCCESS', getAuthenticatedApps)
 }
 
@@ -29,21 +29,7 @@ export function * getAuthenticatedApps(action: ActionType<typeof MainActions.get
   }
 }
 
-/* all just expl below */
-
-// function that makes the api request and returns a Promise for response
-export function * doSomething() {
-  return true
-}
-
 // worker saga: makes the api call when watcher saga sees the action
-export function * scanNewQRCode() {
-  try {
-    const response = yield call(doSomething)
-    // dispatch a success action to the store with the new dog
-    yield put(MainActions.scanNewQRCodeSuccess())
-  } catch (error) {
-    // dispatch a failure action to the store with the error
-    yield put(MainActions.scanNewQRCodeError(error))
-  }
+export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCodeSuccess>) {
+  console.log(action.payload.url)
 }

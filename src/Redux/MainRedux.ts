@@ -10,10 +10,8 @@ const actions = {
     return (authenticatedApps: ReadonlyArray<ThreadFilesInfo>) => resolve({ authenticatedApps })
   }),
   scanNewQRCode: createAction('SCAN_NEW_QR_CODE'),
-  scanNewQRCodeSuccess: createAction('SCAN_NEW_QR_CODE_SUCCESS'),
-  scanNewQRCodeExit: createAction('SCAN_NEW_QR_CODE_EXIT'),
-  scanNewQRCodeError: createAction('SCAN_NEW_QR_CODE_ERROR', (resolve) => {
-    return (error: Error) => resolve({ error })
+  scanNewQRCodeSuccess: createAction('SCAN_NEW_QR_CODE_SUCCESS', (resolve) => {
+    return (url: string) => resolve({ url })
   }),
   fakeToggle: createAction('FAKE_TOGGLE', (resolve) => {
     return (index: number) => resolve({ index })
@@ -84,10 +82,6 @@ export function reducer(state = initialState, action: MainActions) {
       return { ...state, scanning: true, error: undefined }
     case getType(actions.scanNewQRCodeSuccess):
       return { ...state, scanning: false, error: undefined }
-    case getType(actions.scanNewQRCodeExit):
-      return { ...state, scanning: false, error: undefined }
-    case getType(actions.scanNewQRCodeError):
-      return { ...state, scanning: false, error: action.payload.error }
     default:
       return state
   }

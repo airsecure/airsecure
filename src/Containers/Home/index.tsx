@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
-import MainActions, { MainState } from '../../Redux/MainRedux'
+import NavigationService from '../../Navigation/Service'
+import MainActions from '../../Redux/MainRedux'
 import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
 import rowStyles from '../Styles/row'
@@ -23,13 +24,16 @@ type Props = StateProps & DispatchProps
 class Home extends Component<Props> {
   state = {  }
 
+  scanNew = () => {
+    NavigationService.navigate('Home')
+  }
   renderRow = ({item, index}) => {
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
     const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     return (
       <TouchableOpacity
         style={rowStyles.appCell}
-        {/* tslint:disable-next-line jsx-no-lambda */}
+        /* tslint:disable-next-line jsx-no-lambda */
         onPress={() => { this.props.fakeToggle(index) }}
       >
         <View style={rowStyles.mainRow}>
@@ -65,7 +69,7 @@ class Home extends Component<Props> {
           renderItem={this.renderRow}
         />
         <TouchableOpacity
-          onPress={this.props.scanNewQRCode}
+          onPress={this.scanNew}
           style={styles.scanButton}
         >
           <Image

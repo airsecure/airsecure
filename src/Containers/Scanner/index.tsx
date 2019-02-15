@@ -16,6 +16,7 @@ interface StateProps {
 
 interface DispatchProps {
   scanNewQRCode: () => void
+  scanNewQRCodeSuccess: (url: string) => void
 }
 
 type Props = StateProps & DispatchProps
@@ -24,21 +25,7 @@ class Scanner extends Component<Props> {
   state = {  }
 
   onSuccess = (e: any) => {
-    console.log('Scanned', e.data)
-    // const parsed = urlParse.parse(e.data)
-    Alert.alert(
-      JSON.stringify(e.data),
-      'Alert Msg',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel'
-        },
-        { text: 'OK', onPress: () => NavigationService.navigate('Home') }
-      ],
-      { cancelable: false }
-    )
+    this.props.scanNewQRCodeSuccess(e.data)
   }
 
   render() {
@@ -68,7 +55,8 @@ const mapStateToProps = (state: MainState): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
-    scanNewQRCode: () => dispatch(MainActions.scanNewQRCode())
+    scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
+    scanNewQRCodeSuccess: (url: string) => dispatch(MainActions.scanNewQRCodeSuccess(url))
   }
 }
 
