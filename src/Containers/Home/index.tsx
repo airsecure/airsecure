@@ -31,6 +31,9 @@ class Home extends Component<Props> {
     barWidth:  Dimensions.get('screen').width - 30
    }
 
+  static navigationOptions = {
+    title: 'Home'
+  }
   componentDidMount() {
     this.setState({
       barWidth:  Dimensions.get('screen').width - 30
