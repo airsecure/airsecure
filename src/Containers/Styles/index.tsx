@@ -39,8 +39,8 @@ const styles = StyleSheet.create<Style>({
   },
   header: {
     ...systemWeights.bold,
-    color: materialColors.blackPrimary,
-    fontSize: 40,
+    color: materialColors.blackTertiary,
+    fontSize: 20,
     marginTop: 40,
     marginBottom: 50,
     alignSelf: 'center'
