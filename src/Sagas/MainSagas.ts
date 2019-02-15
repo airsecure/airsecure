@@ -8,7 +8,6 @@ export function* mainSagaInit() {
 
 // function that makes the api request and returns a Promise for response
 export function * doSomething() {
-  console.log('doing something')
   return true
 }
 

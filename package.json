@@ -4,7 +4,8 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "tsc": "tsc -p . --noEmit",
-    "lint": "tslint -c tslint.json --project ."
+    "lint": "tslint -c tslint.json --project .",
+    "test": "jest"
   },
   "dependencies": {
     "@textile/react-native-sdk": "1.1.0-rc14",
