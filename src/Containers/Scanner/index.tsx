@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { View, Text, TouchableOpacity } from 'react-native'
 import MainActions, { MainState } from '../../Redux/MainRedux'
+import QRCodeScanner from 'react-native-qrcode-scanner'
 import { RootAction } from '../../Redux/Types'
 import styles from '../Styles'
 
@@ -16,18 +17,30 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps
 
-class Home extends Component<Props> {
+class Scanner extends Component<Props> {
   state = {  }
+
+  onSuccess(e: any) {
+    console.log('An error occured', e.data)
+  }
+
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>This should be a list of your Apps to auth</Text>
-        <TouchableOpacity
-          onPress={this.props.scanNewQRCode}
-        >
-          <Text>This should be a QR Code Button</Text>
-        </TouchableOpacity>
+        <QRCodeScanner
+          onRead={this.onSuccess.bind(this)}
+          topContent={
+            <Text>
+              Go to wikipedia.org/wiki/QR_code on your computer and scan the QR code.
+          </Text>
+          }
+          bottomContent={
+            <TouchableOpacity>
+              <Text>OK. Got it!</Text>
+            </TouchableOpacity>
+          }
+        />
       </View>
     )
   }
@@ -43,4 +56,4 @@ const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Scanner)
