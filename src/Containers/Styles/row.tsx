@@ -8,6 +8,8 @@ import {
   ImageStyle
 } from 'react-native'
 
+import RF from 'react-native-responsive-fontsize'
+
 import { material, materialColors, webWeights } from 'react-native-typography'
 
 interface Style {
@@ -61,14 +63,14 @@ const styles = StyleSheet.create<Style>({
     textAlign: 'left',
     textTransform: 'uppercase',
     lineHeight: 18,
-    fontSize: 14
+    fontSize: RF(1.8)
   },
   userName: {
     ...material.display2Object,
     color: materialColors.blackPrimary,
     textAlign: 'left',
     lineHeight: 24,
-    fontSize: 16
+    fontSize: RF(2.2)
   },
   mainRowRightColumn: {
     flex: 0.1,
@@ -102,7 +104,8 @@ const styles = StyleSheet.create<Style>({
     flex: 0.1
   },
   progressRow: {
-    flex: 1
+    flex: 1,
+    height: 4
   },
   displayNone: {display: 'none'}
 })

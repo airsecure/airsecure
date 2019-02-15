@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 // import urlParse from 'url-parse'
-import { Alert } from 'react-native'
+import { Alert, Image } from 'react-native'
 import { View, Text, TouchableOpacity } from 'react-native'
 import MainActions, { MainState } from '../../Redux/MainRedux'
 import QRCodeScanner from 'react-native-qrcode-scanner'
@@ -30,21 +30,29 @@ class Scanner extends Component<Props> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <QRCodeScanner
-          onRead={this.onSuccess}
-          topContent={<Text>Scan barcode</Text>}
-          cameraProps={{ captureAudio: false }}
-          showMarker={ true }
-          bottomContent={
-            <TouchableOpacity
-              // tslint:disable-next-line:jsx-no-lambda
-              onPress={() => { NavigationService.navigate('Home') }}
-            >
-              <Text>Close</Text>
-            </TouchableOpacity>
-          }
-        />
+      <View style={styles.containerNoPadding}>
+        <View style={styles.qrContainer}>
+          <QRCodeScanner
+            onRead={this.onSuccess}
+            topContent={
+              <Text style={styles.scannerHeader}>Scan barcode</Text>
+            }
+            cameraProps={{ captureAudio: false }}
+            showMarker={ true }
+            bottomContent={
+              <TouchableOpacity
+              /* tslint:disable-next-line jsx-no-lambda */
+                onPress={() => { NavigationService.navigate('Home') }}
+                style={styles.scanButton}
+              >
+                <Image
+                  style={styles.scanIcon}
+                  source={require('../../Static/Images/close.png')}
+                />
+              </TouchableOpacity>
+            }
+          />
+        </View>
       </View>
     )
   }

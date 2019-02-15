@@ -1,6 +1,6 @@
-import { takeLatest, call, put } from 'redux-saga/effects'
+import { takeLatest, call, put, select, delay } from 'redux-saga/effects'
 import { ActionType } from 'typesafe-actions'
-import MainActions from '../Redux/MainRedux'
+import MainActions, {MainSelectors} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
 import UrlParse from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
@@ -10,6 +10,24 @@ export function* mainSagaInit() {
   yield takeLatest('NODE_STARTED', nodeStarted)
   yield takeLatest('SCAN_NEW_QR_CODE_SUCCESS', parseNewCode)
   yield takeLatest('GET_APP_THREAD_SUCCESS', getAuthenticatedApps)
+  yield takeLatest('FAKE_TOGGLE', handleFakeCountdown)
+}
+
+export function * handleFakeCountdown(action: ActionType<typeof MainActions.fakeToggle>) {
+  const item = yield select(MainSelectors.getItemByIndex, action.payload.index)
+  if (!item) {
+    return
+  }
+  let seconds = item.seconds
+  if (item.code && seconds === 0) {
+    yield put(MainActions.updateSeconds(action.payload.index, 30))
+    seconds = 30
+  }
+  while (seconds > 0) {
+    yield delay(1000)
+    seconds -= 1
+    yield put(MainActions.updateSeconds(action.payload.index, seconds))
+  }
 }
 
 export function * nodeStarted() {

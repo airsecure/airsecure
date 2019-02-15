@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
+import { View, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native'
+import ProgressBarAnimated from 'react-native-progress-bar-animated'
 import NavigationService from '../../Navigation/Service'
 import MainActions from '../../Redux/MainRedux'
 import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
 import rowStyles from '../Styles/row'
 import { ThreadFilesInfo } from '@textile/react-native-sdk'
+import { materialColors } from 'react-native-typography'
 
 interface StateProps {
   apps: ReadonlyArray<ThreadFilesInfo>
@@ -19,17 +21,31 @@ interface DispatchProps {
   fakeToggle: (index: number) => void
 }
 
-type Props = StateProps & DispatchProps
+interface ScreenState {
+  barWidth: number
+}
+
+type Props = StateProps & DispatchProps & ScreenState
 
 class Home extends Component<Props> {
-  state = {  }
+  state = {
+    barWidth:  Dimensions.get('screen').width - 30
+   }
 
+  componentDidMount() {
+    this.setState({
+      barWidth:  Dimensions.get('screen').width - 30
+    })
+  }
   scanNew = () => {
     NavigationService.navigate('Scanner')
   }
   renderRow = ({item, index}) => {
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
     const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
+    const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
+    const barWidth = Dimensions.get('screen').width - 30
+    const codeString = item.code ? `${item.code.substring(0, 3)} ${item.code.substring(3, 6)}` : ''
     return (
       <TouchableOpacity
         style={rowStyles.appCell}
@@ -53,10 +69,25 @@ class Home extends Component<Props> {
         </View>
         <View style={codeColumn}>
           <View style={rowStyles.spacer}><Text>.</Text></View>
-          <Text style={rowStyles.code}>{item.code}</Text>
+          <Text style={rowStyles.code}>{codeString}</Text>
           <Text style={rowStyles.seconds}/>
         </View>
-        <View style={rowStyles.progressRow}/>
+        <View style={progressRow}>
+          <ProgressBarAnimated
+              style={{
+                backgroundColor: 'red',
+                borderRadius: 0,
+                borderColor: 'orange'
+              }}
+              borderRadius={0}
+              borderColor={'white'}
+              backgroundColor={materialColors.blackTertiary}
+              height={3}
+              width={barWidth}
+              maxWidth={barWidth}
+              value={100 * Number(item.seconds) / 30.0}
+          />
+        </View>
       </TouchableOpacity>
     )
   }

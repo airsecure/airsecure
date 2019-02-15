@@ -1,5 +1,6 @@
 import { createAction, ActionType, getType } from 'typesafe-actions'
 import { ThreadInfo, ThreadFilesInfo } from '@textile/react-native-sdk'
+import { RootState } from './Types'
 
 const actions = {
   nodeStarted: createAction('NODE_STARTED'),
@@ -15,6 +16,9 @@ const actions = {
   }),
   fakeToggle: createAction('FAKE_TOGGLE', (resolve) => {
     return (index: number) => resolve({ index })
+  }),
+  updateSeconds: createAction('UPDATE_COUNTDOWN_SECONDS', (resolve) => {
+    return (index: number, seconds: number) => resolve({ index, seconds })
   })
 }
 export type MainActions = ActionType<typeof actions>
@@ -58,7 +62,7 @@ const initialState: MainState = {
 
 export function reducer(state = initialState, action: MainActions) {
   switch (action.type) {
-    case getType(actions.fakeToggle):
+    case getType(actions.fakeToggle): {
       const {index} = action.payload
       const updatedFake = state.fakeApps.map((a, i) => {
         if (i === index) {
@@ -68,7 +72,20 @@ export function reducer(state = initialState, action: MainActions) {
             username: a.username,
             hide: !a.hide,
             code: a.code ? undefined : '429589',
-            seconds: 23
+            seconds: a.code ? 30 : 0
+          }
+        }
+        return a
+      })
+      return { ...state, fakeApps: updatedFake }
+    }
+    case getType(actions.updateSeconds):
+      const {index, seconds} = action.payload
+      const updatedFake = state.fakeApps.map((a, i) => {
+        if (i === index) {
+          return {
+            ...a,
+            seconds
           }
         }
         return a
@@ -87,4 +104,7 @@ export function reducer(state = initialState, action: MainActions) {
   }
 }
 
+export const MainSelectors = {
+  getItemByIndex: (state: RootState, index: number) => state.main.fakeApps[index]
+}
 export default actions
