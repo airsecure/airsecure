@@ -4,7 +4,6 @@ import MainActions, {MainSelectors} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
-import * as COMPANIES from '../companies.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
 import OTP from 'otp-client'
@@ -14,11 +13,12 @@ export function* mainSagaInit() {
   yield takeLatest('NODE_STARTED', nodeStarted)
   yield takeLatest('SCAN_NEW_QR_CODE_SUCCESS', parseNewCode)
   yield takeLatest('GET_APP_THREAD_SUCCESS', getAuthenticatedApps)
-  yield takeLatest('FAKE_TOGGLE', handleFakeCountdown)
+  yield takeLatest('TOGGLE_CODE', handleCountdown)
 }
 
-export function * handleFakeCountdown(action: ActionType<typeof MainActions.fakeToggle>) {
+export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {
   const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)
+  console.log('axh here', item.secret)
   if (!item) {
     return
   }
@@ -51,19 +51,23 @@ export function * nodeStarted() {
   yield put(MainActions.getThreadSuccess(target))
 }
 
+function * refreshThreads(target: ThreadInfo) {
+
+  const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
+  const files = yield all(blocks.map((block) => {
+    if (block.files.length && block.files[0].file) {
+      return call(Textile.fileData, block.files[0].file.hash)
+    }
+  }))
+  const apps = files.map((file) => {
+    return JSON.parse(Buffer.from(file.url.split(',')[1], 'base64').toString())
+  })
+  yield put(MainActions.getAppsSuccess(apps))
+}
 export function * getAuthenticatedApps(action: ActionType<typeof MainActions.getThreadSuccess>) {
   if (action.payload.appThread) {
     const target = action.payload.appThread
-    const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
-    const files = yield all(blocks.map((block) => {
-      if (block.files.length && block.files[0].file) {
-        return call(Textile.fileData, block.files[0].file.hash)
-      }
-    }))
-    const apps = files.map((file) => {
-      return JSON.parse(Buffer.from(file.url.split(',')[1], 'base64').toString())
-    })
-    yield put(MainActions.getAppsSuccess(apps))
+    refreshThreads(target)
   }
 }
 
@@ -97,6 +101,7 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
      return
    }
    yield call(Textile.addThreadFiles, dir, appThread.id)
+   refreshThreads(appThread)
   } catch (err) {
     console.log("CODY ERR: " + err.message)
   }

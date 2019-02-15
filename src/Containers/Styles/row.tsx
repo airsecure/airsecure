@@ -52,15 +52,15 @@ const styles = StyleSheet.create<Style>({
   iconBox: {
     height: 50,
     width: 50,
-    borderWidth: 1,
-    borderColor: materialColors.blackSecondary,
+    borderWidth: 0,
+    backgroundColor: materialColors.blackPrimary,
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center'
   },
   logoText: {
     ...material.display2Object,
-    color: materialColors.blackPrimary,
+    color: materialColors.whitePrimary,
     textAlign: 'left',
     lineHeight: RF(3.8),
     fontSize: RF(3.6),

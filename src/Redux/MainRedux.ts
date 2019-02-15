@@ -14,7 +14,7 @@ const actions = {
   scanNewQRCodeSuccess: createAction('SCAN_NEW_QR_CODE_SUCCESS', (resolve) => {
     return (url: string) => resolve({ url })
   }),
-  fakeToggle: createAction('FAKE_TOGGLE', (resolve) => {
+  toggleCode: createAction('TOGGLE_CODE', (resolve) => {
     return (secret: string) => resolve({ secret })
   }),
   updateCode: createAction('UPDATE_CODE', (resolve) => {
@@ -50,7 +50,7 @@ const initialState: MainState = {
 
 export function reducer(state = initialState, action: MainActions) {
   switch (action.type) {
-    case getType(actions.fakeToggle): {
+    case getType(actions.toggleCode): {
       const {secret} = action.payload
       const updatedApps = state.authenticatedApps.map((a) => {
         if (a.secret === secret) {
