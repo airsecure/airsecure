@@ -2,7 +2,7 @@ import { takeLatest, call, put, select, delay } from 'redux-saga/effects'
 import { ActionType } from 'typesafe-actions'
 import MainActions, {MainSelectors} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
-import UrlParse from 'url-parse'
+import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
@@ -51,6 +51,6 @@ export function * getAuthenticatedApps(action: ActionType<typeof MainActions.get
 
 // worker saga: makes the api call when watcher saga sees the action
 export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCodeSuccess>) {
-  let url = UrlParse.parse(action.payload.url)
+  const url = parseUrl(action.payload.url)
   console.log("CODY HEY: " + url.host)
 }
