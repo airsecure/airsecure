@@ -26,14 +26,16 @@ interface ScreenState {
 
 type Props = StateProps & DispatchProps & ScreenState
 
+interface HeaderParams {
+  delete: string
+}
+
 class Home extends Component<Props> {
+
   state = {
     barWidth:  Dimensions.get('screen').width - 30
    }
 
-  static navigationOptions = {
-    title: 'Home'
-  }
   componentDidMount() {
     this.setState({
       barWidth:  Dimensions.get('screen').width - 30
@@ -53,7 +55,7 @@ class Home extends Component<Props> {
       return parts[0].substring(0, 1) + parts[1].substring(0, 1)
     }
 
-    const con = nm.replace(/[aeiou]/ig, '')
+    const con = nm.substring(0, 1) + nm.replace(/[aeiou]/ig, '').substring(1)
     if (con.length === 2) {
       return con
     }
@@ -61,13 +63,14 @@ class Home extends Component<Props> {
     if (con.length < 2) {
       return nm.substring(0, 2)
     }
+
     if (nm.length % 2 === 0) {
-      const x = nm.substring(0, 1)
+      const x = nm.substring((nm.length / 2) - 1, (nm.length / 2))
       const y = nm.substring((nm.length / 2), 1 + (nm.length / 2))
       const go1 = x === 'a' || x === 'e' || x === 'i' || x === 'o' || x === 'u'
       const go2 = y === 'a' || y === 'e' || y === 'i' || y === 'o' || y === 'u'
       if (!go1 && !go2) {
-        return x + y
+        return nm.substring(0, 1) + y
       }
     }
     return con.substring(0, 2)
