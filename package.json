@@ -12,6 +12,7 @@
     "@textile/react-native-sdk": "1.1.0-rc14",
     "buffer": "^5.2.1",
     "otp-client": "^1.0.0",
+    "otp.js": "^1.1.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-native": "^0.57.2",

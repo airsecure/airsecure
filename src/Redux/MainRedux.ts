@@ -34,6 +34,9 @@ export interface AuthenticatedApp {
   hidden?: boolean
   code?: string
   seconds?: number
+  algorithm?: string
+  digits?: number
+  period?: number
 }
 
 export interface MainState {

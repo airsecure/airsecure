@@ -1,12 +1,12 @@
 import { takeLatest, call, put, select, delay, all } from 'redux-saga/effects'
 import { ActionType } from 'typesafe-actions'
-import MainActions, {MainSelectors} from '../Redux/MainRedux'
+import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
-import OTP from 'otp-client'
+import OTP from 'otp.js'
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
@@ -16,9 +16,11 @@ export function* mainSagaInit() {
   yield takeLatest('TOGGLE_CODE', handleCountdown)
 }
 
-function getToken(item) {
-  const otp = new OTP(item.secret, { algorithm: item.algorithm || 'sha1', digits: item.digits || 6, period: item.period || 30})
-  return '' + otp.getToken()
+function getToken(item: AuthenticatedApp) {
+  const TOTP = OTP.totp
+  const code = TOTP.gen(item.secret)
+  // const otp = new OTP(item.secret, { algorithm: item.algorithm || 'sha1', digits: item.digits || 6, period: item.period || 30})
+  return code
 }
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {
   const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)
