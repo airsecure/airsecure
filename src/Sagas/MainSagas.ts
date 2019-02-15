@@ -92,6 +92,7 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   const label = url.pathname.slice(1).split(':')
   const file = url.query
   file['user'] = label[1]
+  file['type'] = url.host
 
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {
