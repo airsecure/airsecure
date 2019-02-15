@@ -13,9 +13,13 @@ import { material, materialColors, systemWeights } from 'react-native-typography
 interface Style {
   applicationView: ViewStyle
   container: ViewStyle
+  containerNoPadding: ViewStyle
   header: TextStyle
+  scannerHeader: TextStyle
   scanButton: ViewStyle
   scanIcon: ImageStyle
+  qrContainer: ViewStyle
+  scannerHome: ViewStyle
 }
 
 const styles = StyleSheet.create<Style>({
@@ -26,6 +30,12 @@ const styles = StyleSheet.create<Style>({
     flex: 1,
     backgroundColor: 'white',
     padding: 40
+  },
+  containerNoPadding: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 0,
+    margin: 0
   },
   header: {
     ...systemWeights.bold,
@@ -51,6 +61,25 @@ const styles = StyleSheet.create<Style>({
   scanIcon: {
     height: 30,
     width: 30
+  },
+  qrContainer: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    padding: 0,
+    margin: 0
+  },
+  scannerHeader: {
+    color: materialColors.blackPrimary,
+    fontSize: 20,
+    marginTop: 40,
+    marginBottom: 30,
+    alignSelf: 'center'
+  },
+  scannerHome: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center'
   }
 })
 
