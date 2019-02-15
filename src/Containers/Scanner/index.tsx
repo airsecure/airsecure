@@ -26,6 +26,7 @@ class Scanner extends Component<Props> {
 
   onSuccess = (e: any) => {
     this.props.scanNewQRCodeSuccess(e.data)
+    NavigationService.navigate('Home')
   }
 
   render() {

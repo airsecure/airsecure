@@ -54,10 +54,19 @@ class Home extends Component<Props> {
       >
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
-            <Image
-              style={rowStyles.appIcon}
-              source={{uri: `http://logo.clearbit.com/${item.url}?size=40`}}
-            />
+            {item.logo &&
+              <Image
+                style={rowStyles.appIcon}
+                source={{uri: `http://logo.clearbit.com/${item.url}?size=40`}}
+              />
+            }
+            {
+              !item.logo &&
+              <Image
+                style={rowStyles.appIcon}
+                source={require('../../Static/Images/unknown.png')}
+              />
+            }
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
             <Text style={rowStyles.appName}>{item.name}</Text>
