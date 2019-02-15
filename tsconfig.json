@@ -3,6 +3,7 @@
     "jsx": "react-native",
     "lib": ["es6"],
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "noEmit": true,
     "strict": true,
     "allowJs": true,
