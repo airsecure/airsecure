@@ -56,16 +56,18 @@ export function * getAuthenticatedApps(action: ActionType<typeof MainActions.get
     const target = action.payload.appThread
     const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
     const files = yield all(blocks.map((block) => {
-      return call(Textile.fileData, block.files[0].file.hash)
+      if (block.files.length && block.files[0].file) {
+        return call(Textile.fileData, block.files[0].file.hash)
+      }
     }))
-    const apps = files.map(file => {
+    const apps = files.map((file) => {
       return JSON.parse(Buffer.from(file.url.split(',')[1], 'base64').toString())
     })
     yield put(MainActions.getAppsSuccess(apps))
   }
 }
 
-fakeUUID = () => {
+function fakeUUID () {
    return 'xxxxxxxx-xxxx-4xxx-yxxx'.replace(/[xy]/g, (c) => {
      // tslint:disable-next-line:no-bitwise
      const r = Math.random() * 16 | 0
@@ -79,10 +81,10 @@ fakeUUID = () => {
 export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCodeSuccess>) {
   const appThread = yield select(MainSelectors.getAppThread)
 
-  let url = parseUrl(action.payload.url, true)
-  let label = url.pathname.slice(1).split(':')
-  var file = url.query
-  file["user"] = label[1]
+  const url = parseUrl(action.payload.url, true)
+  const label = url.pathname.slice(1).split(':')
+  const file = url.query
+  file['user'] = label[1]
 
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {

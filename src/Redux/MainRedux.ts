@@ -18,9 +18,9 @@ const actions = {
     return (secret: string) => resolve({ secret })
   }),
   updateCode: createAction('UPDATE_CODE', (resolve) => {
-    return (index: number, code: string, seconds: number) => {
+    return (secret: string, code: string, seconds: number) => {
       console.log("CODY CODE: " + code)
-      return resolve({ index, code, seconds })
+      return resolve({ secret, code, seconds })
     }
   })
 }
@@ -55,12 +55,8 @@ export function reducer(state = initialState, action: MainActions) {
       const updatedApps = state.authenticatedApps.map((a) => {
         if (a.secret === secret) {
           return {
-            issuer: a.issuer,
-            logoUrl: a.logoUrl,
-            secret: a.secret,
-            user: a.user,
+            ...a,
             hidden: !a.hidden,
-            code: a.code,
             seconds: a.code ? 30 : 0
           }
         }
@@ -69,9 +65,9 @@ export function reducer(state = initialState, action: MainActions) {
       return { ...state, authenticatedApps: updatedApps }
     }
     case getType(actions.updateCode):
-      const {index, code, seconds} = action.payload
+      const {secret, code, seconds} = action.payload
       const updatedFake = state.authenticatedApps.map((a, i) => {
-        if (i === index) {
+        if (a.secret === secret) {
           return {
             ...a,
             code,
@@ -95,7 +91,7 @@ export function reducer(state = initialState, action: MainActions) {
 }
 
 export const MainSelectors = {
-  getItemBySecret: (state: RootState, secret: string) => state.main.authenticatedApps.find(item => item.secret === secret),
+  getItemBySecret: (state: RootState, secret: string) => state.main.authenticatedApps.find((item) => item.secret === secret),
   getAppThread: (state: RootState) => state.main.appThread
 }
 export default actions

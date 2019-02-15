@@ -35,11 +35,9 @@ class Scanner extends Component<Props> {
         <View style={styles.qrContainer}>
           <QRCodeScanner
             onRead={this.onSuccess}
-            topContent={
-              <Text style={styles.scannerHeader}>Scan barcode</Text>
-            }
+            topContent={<Text style={styles.scannerHeader}>Scan barcode</Text>}
             cameraProps={{ captureAudio: false }}
-            showMarker={ true }
+            showMarker={true}
             bottomContent={
               <TouchableOpacity
               /* tslint:disable-next-line jsx-no-lambda */
