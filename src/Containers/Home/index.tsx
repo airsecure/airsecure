@@ -8,21 +8,23 @@ import MainActions, { AuthenticatedApp } from '../../Redux/MainRedux'
 import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
 import rowStyles from '../Styles/row'
-import { ThreadFilesInfo } from '@textile/react-native-sdk'
-import { materialColors } from 'react-native-typography'
+import Dialog from 'react-native-dialog'
 
 interface StateProps {
   apps: ReadonlyArray<AuthenticatedApp>
+  showDialog?: boolean
 }
 
 interface DispatchProps {
   scanNewQRCode: () => void
   toggleCode: (secret: string) => void
   deleteItem: (secret: string) => void
+  setIssuer: (issuer: string) => void
 }
 
 interface ScreenState {
   barWidth: number
+  issuer: ''
   deleteTarget?: string
 }
 
@@ -32,7 +34,8 @@ class Home extends Component<Props> {
 
   state = {
     barWidth:  Dimensions.get('screen').width - 30,
-    deleteTarget: undefined
+    deleteTarget: undefined,
+    issuer: ''
    }
 
   componentDidMount() {
@@ -40,6 +43,7 @@ class Home extends Component<Props> {
       barWidth:  Dimensions.get('screen').width - 30
     })
   }
+
   scanNew = () => {
     NavigationService.navigate('Scanner')
   }
@@ -74,6 +78,12 @@ class Home extends Component<Props> {
     }
     return con.substring(0, 2)
   }
+  handelIssuer = (issuer: string) => {
+    this.setState({issuer})
+  }
+  submitIssuer = () => {
+    this.props.setIssuer(this.state.issuer)
+  }
   renderRow = ({item}) => {
     const deleting = this.state.deleteTarget === item.secret
     const toggleIcon = !deleting && item.code && !item.hidden ? '^' : '⌄'
@@ -101,11 +111,14 @@ class Home extends Component<Props> {
                   style: 'cancel'
                 },
                 {text: 'Confirm', onPress: () => {
-                  this.props.deleteItem(this.state.deleteTarget)
+                  const target = this.state.deleteTarget
+                  if (target) {
+                    this.props.deleteItem(target)
+                  }
                 }}
               ],
               {cancelable: true}
-            );
+            )
           } else {
             this.props.toggleCode(item.secret)
           }
@@ -149,7 +162,7 @@ class Home extends Component<Props> {
           <ProgressBarAnimated
               borderRadius={0}
               borderColor={'white'}
-              backgroundColor={'#aaa'}
+              backgroundColor={'#EEE'}
               height={3}
               width={barWidth}
               maxWidth={barWidth}
@@ -159,6 +172,7 @@ class Home extends Component<Props> {
       </TouchableOpacity>
     )
   }
+
   render() {
     return (
       <View style={styles.container}>
@@ -180,20 +194,27 @@ class Home extends Component<Props> {
             source={require('../../Static/Images/scan.png')}
           />
         </TouchableOpacity>
+        <Dialog.Container visible={this.props.showDialog}>
+            <Dialog.Title>Account Label</Dialog.Title>
+            <Dialog.Input onChangeText={(issuer: string) => this.handelIssuer(issuer)}/>
+            <Dialog.Button label='Okay' onPress={this.submitIssuer} />
+        </Dialog.Container>
       </View>
     )
   }
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  apps: state.main.authenticatedApps
+  apps: state.main.authenticatedApps,
+  showDialog: state.main.issuerRequest
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
     scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
     toggleCode: (secret: string) => dispatch(MainActions.toggleCode(secret)),
-    deleteItem: (secret: string) => dispatch(MainActions.deleteApp(secret))
+    deleteItem: (secret: string) => dispatch(MainActions.deleteApp(secret)),
+    setIssuer: (issuer: string) => dispatch(MainActions.enterIssuerSuccess(issuer))
   }
 }
 

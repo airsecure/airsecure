@@ -72,9 +72,11 @@ const styles = StyleSheet.create<Style>({
   logoText: {
     ...material.display2Object,
     color: materialColors.whitePrimary,
-    textAlign: 'left',
+    textAlignVertical: 'center',
+    textAlign: 'center',
     lineHeight: RF(3.8),
     fontSize: RF(3.6),
+    marginTop: 2,
     zIndex: 3
   },
   mainRowMiddleColumn: {

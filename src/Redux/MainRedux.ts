@@ -3,6 +3,10 @@ import { ThreadInfo, ThreadFilesInfo } from '@textile/react-native-sdk'
 import { RootState } from './Types'
 
 const actions = {
+  enterIssuerRequest: createAction('ENTER_ISSUER_REQUEST'),
+  enterIssuerSuccess: createAction('ENTER_ISSUER_SUCCESS', (resolve) => {
+    return (issuer: string) => resolve({ issuer })
+  }),
   nodeStarted: createAction('NODE_STARTED'),
   getThreadSuccess: createAction('GET_APP_THREAD_SUCCESS', (resolve) => {
     return (appThread?: ThreadInfo) => resolve({ appThread })
@@ -48,6 +52,8 @@ export interface MainState {
   appThread?: ThreadInfo
   authenticatedApps: ReadonlyArray<AuthenticatedApp>
   scanning: boolean
+  issuerRequest?: boolean
+  issuer?: string
   error?: Error
 }
 
@@ -58,6 +64,12 @@ const initialState: MainState = {
 
 export function reducer(state = initialState, action: MainActions) {
   switch (action.type) {
+    case getType(actions.enterIssuerRequest): {
+      return { ...state, issuerRequest: true }
+    }
+    case getType(actions.enterIssuerSuccess): {
+      return { ...state, issuer: action.payload.issuer, issuerRequest: undefined }
+    }
     case getType(actions.toggleCode): {
       const {secret} = action.payload
       const updatedApps = state.authenticatedApps.map((a) => {
@@ -99,6 +111,7 @@ export function reducer(state = initialState, action: MainActions) {
 
 export const MainSelectors = {
   getItemBySecret: (state: RootState, secret: string) => state.main.authenticatedApps.find((item) => item.secret === secret),
-  getAppThread: (state: RootState) => state.main.appThread
+  getAppThread: (state: RootState) => state.main.appThread,
+  getIssuer: (state: RootState) => state.main.issuer
 }
 export default actions

@@ -1,5 +1,5 @@
-import { takeLatest, call, put, select, delay, all } from 'redux-saga/effects'
-import { ActionType } from 'typesafe-actions'
+import { takeLatest, call, put, select, delay, take } from 'redux-saga/effects'
+import { ActionType, getType } from 'typesafe-actions'
 import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType, FileData } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
@@ -114,6 +114,17 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   const url = parseUrl(action.payload.url, true)
   const label = url.pathname.slice(1)
   const file = url.query
+
+  if (!file.issuer) {
+    yield put(MainActions.enterIssuerRequest())
+    while (!file.issuer) {
+      yield take(getType(MainActions.enterIssuerSuccess))
+      file.issuer = yield select(MainSelectors.getIssuer) || ''
+      console.log('axh is empthy!!')
+    }
+    console.log('axh continueeeee')
+  }
+
 
   file['user'] = label.split(':')[1] || label
   file['type'] = url.host
