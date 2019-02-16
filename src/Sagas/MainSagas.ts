@@ -127,9 +127,10 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
       ],
       { cancelable: true }
     )
+    return
   }
 
-  const label = url.pathname.slice(1)
+  const label = decodeURIComponent(url.pathname.slice(1))
   const file = url.query
 
   if (!file.issuer) {
@@ -140,6 +141,8 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
     }
   }
 
+  // cleanup issuer and user strings
+  file.issuer = decodeURIComponent(file.issuer)
   file['user'] = label.split(':')[1] || label
   file['type'] = url.host
 
