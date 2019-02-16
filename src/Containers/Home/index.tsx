@@ -95,7 +95,7 @@ class Home extends Component<Props> {
             </View>
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
-            <Text style={rowStyles.appName}>{item.issuer}</Text>
+            {item.issuer !== '' && <Text style={rowStyles.appName}>{item.issuer}</Text>}
             <Text style={rowStyles.userName}>{item.user}</Text>
           </View>
           <View style={rowStyles.mainRowRightColumn}>
@@ -116,7 +116,7 @@ class Home extends Component<Props> {
               }}
               borderRadius={0}
               borderColor={'white'}
-              backgroundColor={materialColors.blackTertiary}
+              backgroundColor={'black'}
               height={3}
               width={barWidth}
               maxWidth={barWidth}

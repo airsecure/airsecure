@@ -50,7 +50,7 @@ export class Totp {
       key = this.base32tohex(secret);
       epoch = Math.round(now / 1000.0);
       time = this.leftpad(this.dec2hex(Math.floor(epoch / this.expiry)), 16, "0");
-      shaObj = new jsSHA('SHA-1', 'TEXT')
+      shaObj = new jsSHA('SHA-1', 'HEX')
       shaObj.setHMACKey(key, "HEX");
       shaObj.update(time);
       hmac = shaObj.getHMAC("HEX");
