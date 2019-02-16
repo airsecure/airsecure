@@ -105,6 +105,6 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
    yield call(Textile.addThreadFiles, dir, appThread.id)
    yield call(refreshThreads, appThread)
   } catch (err) {
-    console.log("CODY ERR: " + err.message)
+    // pass
   }
 }

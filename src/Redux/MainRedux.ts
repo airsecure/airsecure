@@ -19,7 +19,6 @@ const actions = {
   }),
   updateCode: createAction('UPDATE_CODE', (resolve) => {
     return (secret: string, code: string, seconds: number) => {
-      console.log("CODY CODE: " + code)
       return resolve({ secret, code, seconds })
     }
   })
@@ -34,6 +33,9 @@ export interface AuthenticatedApp {
   hidden?: boolean
   code?: string
   seconds?: number
+  algorithm?: string
+  digits?: number
+  period?: number
 }
 
 export interface MainState {
