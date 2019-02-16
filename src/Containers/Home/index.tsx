@@ -75,7 +75,8 @@ class Home extends Component<Props> {
     }
     return con.substring(0, 2)
   }
-  renderRow = ({item, index}) => {
+  renderRow = ({item}) => {
+    console.log(item)
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
     const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone

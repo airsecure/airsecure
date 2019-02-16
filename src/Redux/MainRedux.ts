@@ -58,8 +58,7 @@ export function reducer(state = initialState, action: MainActions) {
         if (a.secret === secret) {
           return {
             ...a,
-            hidden: !a.hidden,
-            seconds: a.code ? 30 : 0
+            hidden: !a.hidden
           }
         }
         return a
@@ -68,7 +67,7 @@ export function reducer(state = initialState, action: MainActions) {
     }
     case getType(actions.updateCode):
       const {secret, code, seconds} = action.payload
-      const updatedFake = state.authenticatedApps.map((a, i) => {
+      const updatedApps = state.authenticatedApps.map((a) => {
         if (a.secret === secret) {
           return {
             ...a,
@@ -78,7 +77,7 @@ export function reducer(state = initialState, action: MainActions) {
         }
         return a
       })
-      return { ...state, fakeApps: updatedFake }
+      return { ...state, authenticatedApps: updatedApps }
     case getType(actions.getThreadSuccess):
       return { ...state, appThread: action.payload.appThread }
     case getType(actions.getAppsSuccess):
