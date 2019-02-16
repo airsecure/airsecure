@@ -1,7 +1,7 @@
 import { takeLatest, call, put, select, delay, all } from 'redux-saga/effects'
 import { ActionType } from 'typesafe-actions'
 import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
-import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
+import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType, FileData } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
@@ -14,6 +14,7 @@ export function* mainSagaInit() {
   yield takeLatest('SCAN_NEW_QR_CODE_SUCCESS', parseNewCode)
   yield takeLatest('GET_APP_THREAD_SUCCESS', getAuthenticatedApps)
   yield takeLatest('TOGGLE_CODE', handleCountdown)
+  yield takeLatest('DELETE_APP', deleteApp)
 }
 
 function getToken(item: AuthenticatedApp) {
@@ -58,18 +59,37 @@ export function * nodeStarted() {
 }
 
 function * refreshThreads(target: ThreadInfo) {
-
   const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
-  const files = yield all(blocks.map((block) => {
+
+  const files: Array<{file: FileData, blockId: string}> = []
+  for (const block of blocks) {
     if (block.files.length && block.files[0].file) {
-      return call(Textile.fileData, block.files[0].file.hash)
+      const file = yield call(Textile.fileData, block.files[0].file.hash)
+      files.push({
+        file,
+        blockId: block.block
+      })
     }
-  }))
-  const apps = files.map((file) => {
-    return JSON.parse(Buffer.from(file.url.split(',')[1], 'base64').toString())
+  }
+  const apps = files.map((data) => {
+    const dir = JSON.parse(Buffer.from(data.file.url.split(',')[1], 'base64').toString())
+    dir['blockId'] = data.blockId
+    return dir
   })
   yield put(MainActions.getAppsSuccess(apps))
 }
+
+export function * deleteApp(action: ActionType<typeof MainActions.deleteApp>) {
+  const {secret} = action.payload
+  const item = yield select(MainSelectors.getItemBySecret, secret)
+  if (!item) {
+    return
+  }
+  yield call(Textile.addThreadIgnore, item.blockId)
+  const target = yield select(MainSelectors.getAppThread)
+  yield call(refreshThreads, target)
+}
+
 export function * getAuthenticatedApps(action: ActionType<typeof MainActions.getThreadSuccess>) {
   if (action.payload.appThread) {
     const target = action.payload.appThread
@@ -95,8 +115,14 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   const label = url.pathname.slice(1)
   const file = url.query
 
-  file['user'] = label.split(":")[1] || label
+  file['user'] = label.split(':')[1] || label
   file['type'] = url.host
+
+  const exists = yield select(MainSelectors.getItemBySecret, url.query.secret)
+  if (exists) {
+    // don't duplicate entries
+    return
+  }
 
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {

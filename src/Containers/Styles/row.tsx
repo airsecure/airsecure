@@ -17,6 +17,7 @@ interface Style {
   mainRow: ViewStyle
   mainRowLeftColumn: ViewStyle
   iconBox: ViewStyle
+  iconBoxDelete: ViewStyle
   logoText: TextStyle
   mainRowMiddleColumn: ViewStyle
   appName: TextStyle
@@ -53,7 +54,17 @@ const styles = StyleSheet.create<Style>({
     height: 50,
     width: 50,
     borderWidth: 0,
-    backgroundColor: materialColors.blackTertiary,
+    backgroundColor: materialColors.blackPrimary,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  iconBoxDelete: {
+    height: 30,
+    width: 30,
+    borderRadius: 25,
+    borderWidth: 0,
+    backgroundColor: 'red',
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center'

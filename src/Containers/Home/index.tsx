@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { View, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native'
+import { View, Text, TouchableOpacity, Image, FlatList, Dimensions, Alert } from 'react-native'
 import ProgressBarAnimated from 'react-native-progress-bar-animated'
 import NavigationService from '../../Navigation/Service'
 import MainActions, { AuthenticatedApp } from '../../Redux/MainRedux'
@@ -18,22 +18,21 @@ interface StateProps {
 interface DispatchProps {
   scanNewQRCode: () => void
   toggleCode: (secret: string) => void
+  deleteItem: (secret: string) => void
 }
 
 interface ScreenState {
   barWidth: number
+  deleteTarget?: string
 }
 
 type Props = StateProps & DispatchProps & ScreenState
 
-interface HeaderParams {
-  delete: string
-}
-
 class Home extends Component<Props> {
 
   state = {
-    barWidth:  Dimensions.get('screen').width - 30
+    barWidth:  Dimensions.get('screen').width - 30,
+    deleteTarget: undefined
    }
 
   componentDidMount() {
@@ -76,23 +75,62 @@ class Home extends Component<Props> {
     return con.substring(0, 2)
   }
   renderRow = ({item}) => {
-    const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
-    const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
-    const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
+    const deleting = this.state.deleteTarget === item.secret
+    const toggleIcon = !deleting && item.code && !item.hidden ? '^' : '⌄'
+    const codeColumn = !deleting && item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
+    const progressRow = !deleting && item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
     const barWidth = Dimensions.get('screen').width - 30
     const codeString = item.code ? `${item.code.substring(0, 3)} ${item.code.substring(3, 6)}` : ''
+
     return (
       <TouchableOpacity
         style={rowStyles.appCell}
         activeOpacity={0.98}
         /* tslint:disable-next-line jsx-no-lambda */
-        onPress={() => { this.props.toggleCode(item.secret) }}
+        onPress={() => {
+          if (deleting) {
+            Alert.alert(
+              'Delete?',
+              '',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => {
+                    this.setState({deleteTarget: undefined})
+                  },
+                  style: 'cancel'
+                },
+                {text: 'Confirm', onPress: () => {
+                  this.props.deleteItem(this.state.deleteTarget)
+                }}
+              ],
+              {cancelable: true}
+            );
+          } else {
+            this.props.toggleCode(item.secret)
+          }
+        }}
+        /* tslint:disable-next-line jsx-no-lambda */
+        onLongPress={() => {
+          if (deleting) {
+            this.setState({deleteTarget: undefined})
+          } else {
+            this.setState({deleteTarget: item.secret})
+          }
+        }}
       >
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
-            <View style={rowStyles.iconBox}>
-              <Text style={rowStyles.logoText}>{this.getShort(item.issuer || '').toLocaleUpperCase()}</Text>
-            </View>
+            {this.state.deleteTarget === item.secret &&
+              <View style={rowStyles.iconBoxDelete}>
+                <Text style={rowStyles.logoText}>-</Text>
+              </View>
+            }
+            {this.state.deleteTarget !== item.secret &&
+              <View style={rowStyles.iconBox}>
+                <Text style={rowStyles.logoText}>{this.getShort(item.issuer || '').toLocaleUpperCase()}</Text>
+              </View>
+            }
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
             <Text style={rowStyles.appName}>{item.issuer}</Text>
@@ -111,7 +149,7 @@ class Home extends Component<Props> {
           <ProgressBarAnimated
               borderRadius={0}
               borderColor={'white'}
-              backgroundColor={materialColors.blackTertiary}
+              backgroundColor={'#aaa'}
               height={3}
               width={barWidth}
               maxWidth={barWidth}
@@ -126,7 +164,9 @@ class Home extends Component<Props> {
       <View style={styles.container}>
         <Text style={styles.header}>AirSecure</Text>
         {this.props.apps && <FlatList
+          style={styles.flatList}
           data={this.props.apps}
+          extraData={this.state}
           renderItem={this.renderRow}
           /* tslint:disable-next-line jsx-no-lambda */
           keyExtractor={(item, index) => String(index)}
@@ -152,7 +192,8 @@ const mapStateToProps = (state: RootState): StateProps => ({
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
     scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
-    toggleCode: (secret: string) => dispatch(MainActions.toggleCode(secret))
+    toggleCode: (secret: string) => dispatch(MainActions.toggleCode(secret)),
+    deleteItem: (secret: string) => dispatch(MainActions.deleteApp(secret))
   }
 }
 

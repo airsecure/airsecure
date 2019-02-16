@@ -10,6 +10,9 @@ const actions = {
   getAppsSuccess: createAction('GET_APPS_SUCCESS', (resolve) => {
     return (authenticatedApps: ReadonlyArray<AuthenticatedApp>) => resolve({ authenticatedApps })
   }),
+  deleteApp: createAction('DELETE_APP', (resolve) => {
+    return (secret: string) => resolve({ secret })
+  }),
   scanNewQRCode: createAction('SCAN_NEW_QR_CODE'),
   scanNewQRCodeSuccess: createAction('SCAN_NEW_QR_CODE_SUCCESS', (resolve) => {
     return (url: string) => resolve({ url })
@@ -26,6 +29,7 @@ const actions = {
 export type MainActions = ActionType<typeof actions>
 
 export interface AuthenticatedApp {
+  blockId: string
   issuer: string
   logoUrl: string
   user: string
