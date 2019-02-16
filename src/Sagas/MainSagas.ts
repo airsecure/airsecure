@@ -18,7 +18,7 @@ export function* mainSagaInit() {
 
 function getToken(item: AuthenticatedApp) {
   const TOTP = OTP.totp
-  const code = TOTP.gen(item.secret)
+  const code = TOTP.gen({secret: item.secret})
   // const otp = new OTP(item.secret, { algorithm: item.algorithm || 'sha1', digits: item.digits || 6, period: item.period || 30})
   return code
 }
