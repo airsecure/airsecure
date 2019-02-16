@@ -4654,14 +4654,6 @@ react-native-camera@^1.10.2:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-circle@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-circle/-/react-native-circle-0.0.2.tgz#8df491b48958dafc9230c83b17bf75f659ae96ea"
-
-react-native-dialog-input@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/react-native-dialog-input/-/react-native-dialog-input-1.0.7.tgz#b2fefb4193d1784b3ae78c4a18d8fd6759466009"
-
 react-native-dialog@^5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/react-native-dialog/-/react-native-dialog-5.5.0.tgz#09d13e23264f820d6308b5f93e1f03606f97dee3"
