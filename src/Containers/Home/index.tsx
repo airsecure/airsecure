@@ -46,7 +46,7 @@ class Home extends Component<Props> {
   }
 
   getShort(name: string) {
-    const nm = name.toLowerCase().trim()
+    const nm = name.toLowerCase().replace('.', ' ').trim()
     if (nm.length < 3) {
       return nm
     }
@@ -76,7 +76,6 @@ class Home extends Component<Props> {
     return con.substring(0, 2)
   }
   renderRow = ({item}) => {
-    console.log(item)
     const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
     const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
