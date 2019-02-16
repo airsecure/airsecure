@@ -42,7 +42,8 @@ export function * handleCountdown(action: ActionType<typeof MainActions.toggleCo
     yield put(MainActions.updateCode(action.payload.secret, code, seconds))
 
     yield delay(500)
-  } while (true)
+
+  } while (!item.hidden)
 }
 
 export function * nodeStarted() {
