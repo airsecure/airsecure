@@ -45,7 +45,7 @@ const styles = StyleSheet.create<Style>({
   },
   header: {
     ...systemWeights.bold,
-    color: materialColors.blackPrimary,
+    color: '#ccc',
     fontSize: 18,
     marginTop: 20,
     marginBottom: 50,
