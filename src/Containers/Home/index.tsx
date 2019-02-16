@@ -109,14 +109,9 @@ class Home extends Component<Props> {
         </View>
         <View style={progressRow}>
           <ProgressBarAnimated
-              style={{
-                backgroundColor: 'red',
-                borderRadius: 0,
-                borderColor: 'orange'
-              }}
               borderRadius={0}
               borderColor={'white'}
-              backgroundColor={'black'}
+              backgroundColor={materialColors.blackTertiary}
               height={3}
               width={barWidth}
               maxWidth={barWidth}
@@ -133,6 +128,8 @@ class Home extends Component<Props> {
         {this.props.apps && <FlatList
           data={this.props.apps}
           renderItem={this.renderRow}
+          /* tslint:disable-next-line jsx-no-lambda */
+          keyExtractor={(item, index) => String(index)}
         />}
         <TouchableOpacity
           onPress={this.scanNew}
