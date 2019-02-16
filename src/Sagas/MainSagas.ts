@@ -3,6 +3,7 @@ import { ActionType, getType } from 'typesafe-actions'
 import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
 import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType, FileData } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
+import { Alert } from 'react-native'
 import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
@@ -26,6 +27,7 @@ function getToken(item: AuthenticatedApp) {
   const totp = jsotp.TOTP(item.secret)
   return '' + totp.now()
 }
+
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {
   const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)
   if (!item) {
@@ -111,7 +113,24 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   const appThread = yield select(MainSelectors.getAppThread)
 
   const url = parseUrl(action.payload.url, true)
-  const label = url.pathname.slice(1)
+
+  if (url.host.toLocaleLowerCase() !== 'totp') {
+    Alert.alert(
+      'Invalid One-Time Password Protocol',
+      'Must be TOTP',
+      [
+        {
+          text: 'Cancel', onPress: () => {
+            return
+          }
+        }
+      ],
+      { cancelable: true }
+    )
+    return
+  }
+
+  const label = decodeURIComponent(url.pathname.slice(1))
   const file = url.query
 
   if (!file.issuer) {
@@ -122,6 +141,8 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
     }
   }
 
+  // cleanup issuer and user strings
+  file.issuer = decodeURIComponent(file.issuer)
   file['user'] = label.split(':')[1] || label
   file['type'] = url.host
 

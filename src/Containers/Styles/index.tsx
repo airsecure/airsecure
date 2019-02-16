@@ -50,7 +50,7 @@ const styles = StyleSheet.create<Style>({
   },
   flatList: {
     flex: 1,
-    paddingBottom: 40
+    marginBottom: 80
   },
   containerNoPadding: {
     flex: 1,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create<Style>({
   },
   scanButton: {
     position: 'absolute',
-    bottom: 60,
+    bottom: 30,
     height: 70,
     width: 70,
     borderRadius: 40,
