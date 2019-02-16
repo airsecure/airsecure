@@ -114,7 +114,7 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
 
   const url = parseUrl(action.payload.url, true)
 
-  if (url.host !== 'totp') {
+  if (url.host.toLocaleLowerCase() !== 'totp') {
     Alert.alert(
       'Invalid One-Time Password Protocol',
       'Must be TOTP',
