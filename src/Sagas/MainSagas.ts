@@ -92,6 +92,7 @@ function fakeUUID () {
 export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCodeSuccess>) {
   const appThread = yield select(MainSelectors.getAppThread)
 
+  console.log('axh', action.payload.url)
   const url = parseUrl(action.payload.url, true)
   const label = url.pathname.slice(1)
   const file = url.query
