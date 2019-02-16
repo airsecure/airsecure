@@ -6,7 +6,7 @@ An on device first two-factor authenticator. Storage and encryption managed by [
 
 ![img_2129](https://user-images.githubusercontent.com/370259/52906416-b471e100-3208-11e9-8058-6b628511bfaf.png)
 
-[Google Play)(https://play.google.com/store/apps/details?id=io.textile.airsecure)
+[Google Play](https://play.google.com/store/apps/details?id=io.textile.airsecure)
 
 [Apple App Store]() `pending review`
 
