@@ -53,7 +53,7 @@ const styles = StyleSheet.create<Style>({
     height: 50,
     width: 50,
     borderWidth: 0,
-    backgroundColor: materialColors.blackPrimary,
+    backgroundColor: materialColors.blackTertiary,
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center'

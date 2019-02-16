@@ -17,8 +17,13 @@ export function* mainSagaInit() {
 }
 
 function getToken(item: AuthenticatedApp) {
+  if (item.type && item.type.toLocaleLowerCase() === 'hotp') {
+    const hotp = new Hotp(6)
+    const code = hotp.getOtp(item.secret)
+    return '' + code
+  }
   const totp = new Totp(30, 6)
-  const code = totp.getOtp({string: item.secret})
+  const code = totp.getOtp(item.secret)
   return '' + code
 }
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {

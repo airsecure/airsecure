@@ -116,7 +116,7 @@ class Home extends Component<Props> {
               }}
               borderRadius={0}
               borderColor={'white'}
-              backgroundColor={materialColors.blackTertiary}
+              backgroundColor={'black'}
               height={3}
               width={barWidth}
               maxWidth={barWidth}
