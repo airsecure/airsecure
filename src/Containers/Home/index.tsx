@@ -91,7 +91,7 @@ class Home extends Component<Props> {
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
             <View style={rowStyles.iconBox}>
-              <Text style={rowStyles.logoText}>{this.getShort(item.issuer).toLocaleUpperCase()}</Text>
+              <Text style={rowStyles.logoText}>{this.getShort(item.issuer || '').toLocaleUpperCase()}</Text>
             </View>
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>

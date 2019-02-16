@@ -93,9 +93,10 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   const appThread = yield select(MainSelectors.getAppThread)
 
   const url = parseUrl(action.payload.url, true)
-  const label = url.pathname.slice(1).split(':')
+  const label = url.pathname.slice(1)
   const file = url.query
-  file['user'] = label[1]
+
+  file['user'] = label.split(":")[1] || label
   file['type'] = url.host
 
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
