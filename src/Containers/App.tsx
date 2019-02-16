@@ -21,12 +21,12 @@ class App extends Component {
     )
   }
 
-  componentWillMount () {
+  componentDidMount () {
     this.events.addListener('newNodeState', (payload) => {
       if (payload.state === 'started') {
         store.dispatch(MainActions.nodeStarted())
       }
-      console.info('axh @textile/newNodeState', payload.state)
+      console.info('@textile/newNodeState', payload.state)
     })
     this.textile.setup()
   }
