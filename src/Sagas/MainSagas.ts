@@ -34,7 +34,8 @@ export function * handleCountdown(action: ActionType<typeof MainActions.toggleCo
   let seconds = item.seconds
   let code = item.code
   if (!item.code || seconds === 0) {
-    seconds = 30
+    let epoch = Math.round(new Date().getTime() / 1000.0)
+    seconds = 30 - (Math.floor(epoch) - (Math.floor(epoch / 30) * 30))
 
     code = yield call(getToken, item)
 
@@ -42,7 +43,11 @@ export function * handleCountdown(action: ActionType<typeof MainActions.toggleCo
   }
   while (seconds > 0) {
     yield delay(1000)
-    seconds -= 1
+
+    let epoch = Math.round(new Date().getTime() / 1000.0)
+    seconds = 30 - (Math.floor(epoch) - (Math.floor(epoch / 30) * 30))
+
+    code = yield call(getToken, item)
     yield put(MainActions.updateCode(action.payload.secret, code, seconds))
   }
 }
