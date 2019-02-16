@@ -86,7 +86,7 @@ class Home extends Component<Props> {
   }
   renderRow = ({item}) => {
     const deleting = this.state.deleteTarget === item.secret
-    const toggleIcon = !deleting && item.code && !item.hidden ? '' : '⌄'
+    const toggleIcon = !deleting && item.code && !item.hidden ? '-' : '⌄'
     const codeColumn = !deleting && item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
     const progressRow = !deleting && item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
     const barWidth = Dimensions.get('screen').width - 30
