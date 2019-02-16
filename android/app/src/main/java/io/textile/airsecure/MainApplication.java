@@ -1,4 +1,4 @@
-package com.airsecure;
+package io.textile.airsecure;
 
 import android.app.Application;
 
