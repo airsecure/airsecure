@@ -22,8 +22,8 @@ function getToken(item: AuthenticatedApp) {
     const code = hotp.getOtp(item.secret)
     return '' + code
   }
-  const totp = new Totp(30, 6)
-  const code = totp.getOtp({string: item.secret})
+  const totp = new Totp()
+  const code = totp.getOtp(item.secret)
   return '' + code
 }
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {

@@ -95,7 +95,7 @@ class Home extends Component<Props> {
             </View>
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
-            <Text style={rowStyles.appName}>{item.issuer}</Text>
+            {item.issuer !== '' && <Text style={rowStyles.appName}>{item.issuer}</Text>}
             <Text style={rowStyles.userName}>{item.user}</Text>
           </View>
           <View style={rowStyles.mainRowRightColumn}>
