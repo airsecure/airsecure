@@ -107,7 +107,7 @@ const styles = StyleSheet.create<Style>({
     ...webWeights.thin,
     color: materialColors.blackTertiary,
     textAlign: 'center',
-    fontSize: 34
+    fontSize: 24
   },
   codeRow: {
     flex: 1,
