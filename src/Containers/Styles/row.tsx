@@ -17,6 +17,7 @@ interface Style {
   mainRow: ViewStyle
   mainRowLeftColumn: ViewStyle
   iconBox: ViewStyle
+  iconBoxDelete: ViewStyle
   logoText: TextStyle
   mainRowMiddleColumn: ViewStyle
   appName: TextStyle
@@ -58,12 +59,24 @@ const styles = StyleSheet.create<Style>({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  iconBoxDelete: {
+    height: 30,
+    width: 30,
+    borderRadius: 25,
+    borderWidth: 0,
+    backgroundColor: 'red',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   logoText: {
     ...material.display2Object,
     color: materialColors.whitePrimary,
-    textAlign: 'left',
+    textAlignVertical: 'center',
+    textAlign: 'center',
     lineHeight: RF(3.8),
     fontSize: RF(3.6),
+    marginTop: 2,
     zIndex: 3
   },
   mainRowMiddleColumn: {

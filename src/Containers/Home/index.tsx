@@ -1,39 +1,41 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { View, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native'
+import { View, Text, TouchableOpacity, Image, FlatList, Dimensions, Alert } from 'react-native'
 import ProgressBarAnimated from 'react-native-progress-bar-animated'
 import NavigationService from '../../Navigation/Service'
 import MainActions, { AuthenticatedApp } from '../../Redux/MainRedux'
 import { RootAction, RootState } from '../../Redux/Types'
 import styles from '../Styles'
 import rowStyles from '../Styles/row'
-import { ThreadFilesInfo } from '@textile/react-native-sdk'
-import { materialColors } from 'react-native-typography'
+import Dialog from 'react-native-dialog'
 
 interface StateProps {
   apps: ReadonlyArray<AuthenticatedApp>
+  showDialog?: boolean
 }
 
 interface DispatchProps {
   scanNewQRCode: () => void
   toggleCode: (secret: string) => void
+  deleteItem: (secret: string) => void
+  setIssuer: (issuer: string) => void
 }
 
 interface ScreenState {
   barWidth: number
+  issuer: ''
+  deleteTarget?: string
 }
 
 type Props = StateProps & DispatchProps & ScreenState
 
-interface HeaderParams {
-  delete: string
-}
-
 class Home extends Component<Props> {
 
   state = {
-    barWidth:  Dimensions.get('screen').width - 30
+    barWidth:  Dimensions.get('screen').width - 30,
+    deleteTarget: undefined,
+    issuer: ''
    }
 
   componentDidMount() {
@@ -41,6 +43,7 @@ class Home extends Component<Props> {
       barWidth:  Dimensions.get('screen').width - 30
     })
   }
+
   scanNew = () => {
     NavigationService.navigate('Scanner')
   }
@@ -75,24 +78,72 @@ class Home extends Component<Props> {
     }
     return con.substring(0, 2)
   }
+  handelIssuer = (issuer: string) => {
+    this.setState({issuer})
+  }
+  submitIssuer = () => {
+    this.props.setIssuer(this.state.issuer)
+  }
   renderRow = ({item}) => {
-    const toggleIcon = item.code && !item.hidden ? '^' : '⌄'
-    const codeColumn = item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
-    const progressRow = item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
+    const deleting = this.state.deleteTarget === item.secret
+    const toggleIcon = !deleting && item.code && !item.hidden ? '' : '⌄'
+    const codeColumn = !deleting && item.code && !item.hidden ? rowStyles.codeRow : rowStyles.displayNone
+    const progressRow = !deleting && item.code && !item.hidden ? rowStyles.progressRow : rowStyles.displayNone
     const barWidth = Dimensions.get('screen').width - 30
     const codeString = item.code ? `${item.code.substring(0, 3)} ${item.code.substring(3, 6)}` : ''
+
     return (
       <TouchableOpacity
         style={rowStyles.appCell}
         activeOpacity={0.98}
         /* tslint:disable-next-line jsx-no-lambda */
-        onPress={() => { this.props.toggleCode(item.secret) }}
+        onPress={() => {
+          if (deleting) {
+            Alert.alert(
+              'Delete?',
+              '',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => {
+                    this.setState({deleteTarget: undefined})
+                  },
+                  style: 'cancel'
+                },
+                {text: 'Confirm', onPress: () => {
+                  const target = this.state.deleteTarget
+                  if (target) {
+                    this.props.deleteItem(target)
+                  }
+                }}
+              ],
+              {cancelable: true}
+            )
+          } else {
+            this.props.toggleCode(item.secret)
+          }
+        }}
+        /* tslint:disable-next-line jsx-no-lambda */
+        onLongPress={() => {
+          if (deleting) {
+            this.setState({deleteTarget: undefined})
+          } else {
+            this.setState({deleteTarget: item.secret})
+          }
+        }}
       >
         <View style={rowStyles.mainRow}>
           <View style={rowStyles.mainRowLeftColumn}>
-            <View style={rowStyles.iconBox}>
-              <Text style={rowStyles.logoText}>{this.getShort(item.issuer || '').toLocaleUpperCase()}</Text>
-            </View>
+            {this.state.deleteTarget === item.secret &&
+              <View style={rowStyles.iconBoxDelete}>
+                <Text style={rowStyles.logoText}>-</Text>
+              </View>
+            }
+            {this.state.deleteTarget !== item.secret &&
+              <View style={rowStyles.iconBox}>
+                <Text style={rowStyles.logoText}>{this.getShort(item.issuer || '').toLocaleUpperCase()}</Text>
+              </View>
+            }
           </View>
           <View style={rowStyles.mainRowMiddleColumn}>
             {item.issuer !== '' && <Text style={rowStyles.appName}>{item.issuer}</Text>}
@@ -109,14 +160,9 @@ class Home extends Component<Props> {
         </View>
         <View style={progressRow}>
           <ProgressBarAnimated
-              style={{
-                backgroundColor: 'red',
-                borderRadius: 0,
-                borderColor: 'orange'
-              }}
               borderRadius={0}
               borderColor={'white'}
-              backgroundColor={'black'}
+              backgroundColor={'#EEE'}
               height={3}
               width={barWidth}
               maxWidth={barWidth}
@@ -126,13 +172,18 @@ class Home extends Component<Props> {
       </TouchableOpacity>
     )
   }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.header}>AirSecure</Text>
         {this.props.apps && <FlatList
+          style={styles.flatList}
           data={this.props.apps}
+          extraData={this.state}
           renderItem={this.renderRow}
+          /* tslint:disable-next-line jsx-no-lambda */
+          keyExtractor={(item, index) => String(index)}
         />}
         <TouchableOpacity
           onPress={this.scanNew}
@@ -143,19 +194,27 @@ class Home extends Component<Props> {
             source={require('../../Static/Images/scan.png')}
           />
         </TouchableOpacity>
+        <Dialog.Container visible={this.props.showDialog}>
+            <Dialog.Title>Account Label</Dialog.Title>
+            <Dialog.Input onChangeText={(issuer: string) => this.handelIssuer(issuer)}/>
+            <Dialog.Button label='Okay' onPress={this.submitIssuer} />
+        </Dialog.Container>
       </View>
     )
   }
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  apps: state.main.authenticatedApps
+  apps: state.main.authenticatedApps,
+  showDialog: state.main.issuerRequest
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<RootAction>): DispatchProps => {
   return {
     scanNewQRCode: () => dispatch(MainActions.scanNewQRCode()),
-    toggleCode: (secret: string) => dispatch(MainActions.toggleCode(secret))
+    toggleCode: (secret: string) => dispatch(MainActions.toggleCode(secret)),
+    deleteItem: (secret: string) => dispatch(MainActions.deleteApp(secret)),
+    setIssuer: (issuer: string) => dispatch(MainActions.enterIssuerSuccess(issuer))
   }
 }
 

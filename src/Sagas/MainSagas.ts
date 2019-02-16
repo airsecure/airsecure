@@ -1,30 +1,30 @@
-import { takeLatest, call, put, select, delay, all } from 'redux-saga/effects'
-import { ActionType } from 'typesafe-actions'
+import { takeLatest, takeEvery, call, put, select, delay, take } from 'redux-saga/effects'
+import { ActionType, getType } from 'typesafe-actions'
 import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
-import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType } from '@textile/react-native-sdk'
+import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType, FileData } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
-import { Hotp, Totp } from '../../js/otp/jsOTP'
+const jsotp = require('jsotp')
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
   yield takeLatest('NODE_STARTED', nodeStarted)
   yield takeLatest('SCAN_NEW_QR_CODE_SUCCESS', parseNewCode)
   yield takeLatest('GET_APP_THREAD_SUCCESS', getAuthenticatedApps)
-  yield takeLatest('TOGGLE_CODE', handleCountdown)
+  yield takeEvery('TOGGLE_CODE', handleCountdown)
+  yield takeLatest('DELETE_APP', deleteApp)
 }
 
 function getToken(item: AuthenticatedApp) {
   if (item.type && item.type.toLocaleLowerCase() === 'hotp') {
-    const hotp = new Hotp(6)
-    const code = hotp.getOtp(item.secret)
-    return '' + code
+    const hotp = jsotp.HOTP(item.secret)
+    return '' + hotp.at(item.counter)
   }
-  const totp = new Totp()
-  const code = totp.getOtp(item.secret)
-  return '' + code
+  // Create TOTP object
+  const totp = jsotp.TOTP(item.secret)
+  return '' + totp.now()
 }
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {
   const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)
@@ -35,7 +35,7 @@ export function * handleCountdown(action: ActionType<typeof MainActions.toggleCo
   let code = item.code
 
   do {
-    let epoch = Math.round(new Date().getTime() / 1000.0)
+    const epoch = Math.round(new Date().getTime() / 1000.0)
     seconds = 30 - (Math.floor(epoch) - (Math.floor(epoch / 30) * 30))
 
     code = yield call(getToken, item)
@@ -58,18 +58,37 @@ export function * nodeStarted() {
 }
 
 function * refreshThreads(target: ThreadInfo) {
-
   const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
-  const files = yield all(blocks.map((block) => {
+
+  const files: Array<{file: FileData, blockId: string}> = []
+  for (const block of blocks) {
     if (block.files.length && block.files[0].file) {
-      return call(Textile.fileData, block.files[0].file.hash)
+      const file = yield call(Textile.fileData, block.files[0].file.hash)
+      files.push({
+        file,
+        blockId: block.block
+      })
     }
-  }))
-  const apps = files.map((file) => {
-    return JSON.parse(Buffer.from(file.url.split(',')[1], 'base64').toString())
+  }
+  const apps = files.map((data) => {
+    const dir = JSON.parse(Buffer.from(data.file.url.split(',')[1], 'base64').toString())
+    dir['blockId'] = data.blockId
+    return dir
   })
   yield put(MainActions.getAppsSuccess(apps))
 }
+
+export function * deleteApp(action: ActionType<typeof MainActions.deleteApp>) {
+  const {secret} = action.payload
+  const item = yield select(MainSelectors.getItemBySecret, secret)
+  if (!item) {
+    return
+  }
+  yield call(Textile.addThreadIgnore, item.blockId)
+  const target = yield select(MainSelectors.getAppThread)
+  yield call(refreshThreads, target)
+}
+
 export function * getAuthenticatedApps(action: ActionType<typeof MainActions.getThreadSuccess>) {
   if (action.payload.appThread) {
     const target = action.payload.appThread
@@ -91,13 +110,26 @@ function fakeUUID () {
 export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCodeSuccess>) {
   const appThread = yield select(MainSelectors.getAppThread)
 
-  console.log('axh', action.payload.url)
   const url = parseUrl(action.payload.url, true)
   const label = url.pathname.slice(1)
   const file = url.query
 
-  file['user'] = label.split(":")[1] || label
+  if (!file.issuer) {
+    yield put(MainActions.enterIssuerRequest())
+    while (!file.issuer) {
+      yield take(getType(MainActions.enterIssuerSuccess))
+      file.issuer = yield select(MainSelectors.getIssuer) || ''
+    }
+  }
+
+  file['user'] = label.split(':')[1] || label
   file['type'] = url.host
+
+  const exists = yield select(MainSelectors.getItemBySecret, url.query.secret)
+  if (exists) {
+    // don't duplicate entries
+    return
+  }
 
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {

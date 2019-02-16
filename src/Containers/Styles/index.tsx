@@ -13,6 +13,8 @@ import { material, materialColors, systemWeights } from 'react-native-typography
 interface Style {
   applicationView: ViewStyle
   container: ViewStyle
+
+  flatList: ViewStyle
   containerNoPadding: ViewStyle
   header: TextStyle
   scannerHeader: TextStyle
@@ -31,6 +33,10 @@ const styles = StyleSheet.create<Style>({
     backgroundColor: 'white',
     padding: 40
   },
+  flatList: {
+    flex: 1,
+    paddingBottom: 40
+  },
   containerNoPadding: {
     flex: 1,
     backgroundColor: 'white',
@@ -40,8 +46,8 @@ const styles = StyleSheet.create<Style>({
   header: {
     ...systemWeights.bold,
     color: materialColors.blackPrimary,
-    fontSize: 20,
-    marginTop: 40,
+    fontSize: 18,
+    marginTop: 20,
     marginBottom: 50,
     alignSelf: 'center'
   },

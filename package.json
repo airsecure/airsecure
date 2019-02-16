@@ -11,6 +11,7 @@
   "dependencies": {
     "@textile/react-native-sdk": "1.1.0-rc14",
     "buffer": "^5.2.1",
+    "jsotp": "^1.0.4",
     "jssha": "^2.3.1",
     "otp-client": "^1.0.0",
     "prop-types": "^15.6.2",
@@ -20,6 +21,8 @@
     "react-native-background-timer": "2.1.0-alpha.6",
     "react-native-camera": "^1.10.2",
     "react-native-circle": "^0.0.2",
+    "react-native-dialog": "^5.5.0",
+    "react-native-dialog-input": "^1.0.7",
     "react-native-fs": "^2.11.17",
     "react-native-navigation": "^2.11.0",
     "react-native-progress-bar-animated": "^1.0.6",
