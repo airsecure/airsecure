@@ -71,7 +71,7 @@ export function reducer(state = initialState, action: MainActions) {
         if (a.secret === secret) {
           return {
             ...a,
-            code,
+            code: seconds > 0 ? a.code : undefined,
             seconds
           }
         }
