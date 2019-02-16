@@ -19,12 +19,9 @@ export function* mainSagaInit() {
 }
 
 function getToken(item: AuthenticatedApp) {
-  if (item.type && item.type.toLocaleLowerCase() === 'hotp') {
-    const hotp = jsotp.HOTP(item.secret)
-    return '' + hotp.at(item.counter)
-  }
   // Create TOTP object
-  const totp = jsotp.TOTP(item.secret)
+  const totp = jsotp.TOTP(item.secret, item.period || 30)
+  totp.digits = item.digits || 6
   return '' + totp.now()
 }
 
@@ -145,13 +142,15 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   file.issuer = decodeURIComponent(file.issuer)
   file['user'] = label.split(':')[1] || label
   file['type'] = url.host
+  file['algorithm'] = (file.algorithm || 'sha1').toLocaleLowerCase()
+  file['digits'] = parseInt(file.digits || 6, 10)
+  file['period'] = parseInt(file.period || 30, 10)
 
   const exists = yield select(MainSelectors.getItemBySecret, url.query.secret)
   if (exists) {
     // don't duplicate entries
     return
   }
-
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {
    yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
