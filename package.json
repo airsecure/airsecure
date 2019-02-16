@@ -23,6 +23,7 @@
     "react-native-dialog": "^5.5.0",
     "react-native-fs": "^2.11.17",
     "react-native-navigation": "^2.11.0",
+    "react-native-permissions": "git+https://github.com/textileio/react-native-permissions.git",
     "react-native-progress-bar-animated": "^1.0.6",
     "react-native-qrcode-scanner": "^1.1.2",
     "react-native-responsive-fontsize": "^0.1.8",

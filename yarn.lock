@@ -4697,9 +4697,9 @@ react-native-navigation@^2.11.0:
     react-lifecycles-compat "2.0.0"
     tslib "1.9.3"
 
-react-native-permissions@^1.1.1:
+react-native-permissions@^1.1.1, "react-native-permissions@git+https://github.com/textileio/react-native-permissions.git":
   version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-1.1.1.tgz#4876004681ff8556454613d85249b01baff9b35b"
+  resolved "git+https://github.com/textileio/react-native-permissions.git#6a4735ac44ce6b00e5e869c27c53ee426958cf4c"
 
 react-native-progress-bar-animated@^1.0.6:
   version "1.0.6"
