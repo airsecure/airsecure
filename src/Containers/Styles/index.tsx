@@ -12,6 +12,8 @@ import { material, materialColors, systemWeights } from 'react-native-typography
 
 interface Style {
   applicationView: ViewStyle
+  onboardingView: ViewStyle
+  onboarding: TextStyle
   container: ViewStyle
 
   flatList: ViewStyle
@@ -27,6 +29,19 @@ interface Style {
 const styles = StyleSheet.create<Style>({
   applicationView: {
     flex: 1
+  },
+  onboardingView: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center'
+  },
+  onboarding: {
+    ...systemWeights.thin,
+    color: '#aaa',
+    fontSize: 12,
+    alignSelf: 'center'
   },
   container: {
     flex: 1,

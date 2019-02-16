@@ -177,7 +177,7 @@ class Home extends Component<Props> {
     return (
       <View style={styles.container}>
         <Text style={styles.header}>AirSecure</Text>
-        {this.props.apps && <FlatList
+        {!!this.props.apps.length && <FlatList
           style={styles.flatList}
           data={this.props.apps}
           extraData={this.state}
@@ -185,6 +185,9 @@ class Home extends Component<Props> {
           /* tslint:disable-next-line jsx-no-lambda */
           keyExtractor={(item, index) => String(index)}
         />}
+        {!this.props.apps.length && <View style={styles.onboardingView}>
+          <Text style={styles.onboarding}>scan your first 2FA account</Text>
+        </View>}
         <TouchableOpacity
           onPress={this.scanNew}
           style={styles.scanButton}
