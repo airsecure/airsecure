@@ -6,7 +6,7 @@ import parseUrl from 'url-parse'
 import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
-import { Hotp, Totp } from '../../js/otp/jsOTP'
+const jsotp = require('jsotp')
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
@@ -18,13 +18,12 @@ export function* mainSagaInit() {
 
 function getToken(item: AuthenticatedApp) {
   if (item.type && item.type.toLocaleLowerCase() === 'hotp') {
-    const hotp = new Hotp(6)
-    const code = hotp.getOtp(item.secret)
-    return '' + code
+    const hotp = jsotp.HOTP(item.secret)
+    return '' + hotp.at(item.counter)
   }
-  const totp = new Totp(30, 6)
-  const code = totp.getOtp(item.secret)
-  return '' + code
+  // Create TOTP object
+  const totp = jsotp.TOTP(item.secret)
+  return '' + totp.now()
 }
 export function * handleCountdown(action: ActionType<typeof MainActions.toggleCode>) {
   const item = yield select(MainSelectors.getItemBySecret, action.payload.secret)

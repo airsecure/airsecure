@@ -37,6 +37,7 @@ export interface AuthenticatedApp {
   digits?: number
   period?: number
   type?: string
+  counter?: number
 }
 
 export interface MainState {
