@@ -39,7 +39,7 @@ const styles = StyleSheet.create<Style>({
   },
   header: {
     ...systemWeights.bold,
-    color: materialColors.blackTertiary,
+    color: materialColors.blackPrimary,
     fontSize: 20,
     marginTop: 40,
     marginBottom: 50,
