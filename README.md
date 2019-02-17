@@ -8,10 +8,13 @@ An on device first two-factor authenticator. Storage and encryption managed by [
 
 [Google Play](https://play.google.com/store/apps/details?id=io.textile.airsecure)
 
-[Apple App Store]() `pending review`
+[Apple App Store](https://testflight.apple.com/join/dVh9i7hX)
 
 [FDroid]() `send PR please`
 
+### How it works
+
+Inside of AirSecure, each client creates a secure, on-device private wallet to store private keys to their encrypted entries. This is done using [Textile](https://github.com/textileio/textile-go/wiki) to create the wallet, encrypte the data, and manage keys on the user's behalf. Next, we will add Textile's device sync capability and remote backup capability to make secret management a bit easier for everyone. 
 
 ### TODO
 
