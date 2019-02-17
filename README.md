@@ -1,6 +1,6 @@
 # AirSecure
 
-AirSecure is an open-source, zero trust two factor authentication manager. The AirSecure app manages your 2FA accounts and will issue you new access tokens to your accounts (e.g. GitHub and Coinbase) entirely on device without any 3rd party servers, tracking, or off device processing. Storage and encryption managed by [Textile](https://github.com/textileio/textile-go). 
+AirSecure is an open-source, zero trust two factor authentication manager. The AirSecure app manages your 2FA accounts (e.g. GitHub and Coinbase) and will issue you new access tokens to your accounts entirely on device without any 3rd party servers, tracking, or off device processing. Storage and encryption managed by [Textile](https://github.com/textileio/textile-go). 
 
 ## Available on Android & iOS
 
