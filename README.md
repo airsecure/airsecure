@@ -2,6 +2,10 @@
 
 AirSecure is an open-source, zero trust two factor authentication manager. The AirSecure app manages your 2FA accounts (e.g. GitHub and Coinbase) and will issue you new access tokens to your accounts entirely on device without any 3rd party servers, tracking, or off device processing. 
 
+## Currently in Beta
+
+While the app runs we are taking some time to do QA and fully test the code. We encourage you to continue using your primary 2FA management app alongside AirSecure (simply scan any QR codes with both apps) to help us test the system. If you ever find it not to work, please [file a bug report](https://github.com/airsecure/airsecure/issues).
+
 ## Available on Android & iOS
 
 ![img_2129](https://user-images.githubusercontent.com/370259/52906826-2a2e7a80-3212-11e9-9d63-c350b9823a85.png)
