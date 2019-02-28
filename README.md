@@ -1,6 +1,8 @@
 # AirSecure
 
-AirSecure is an open-source, zero trust two factor authentication manager. The AirSecure app manages your 2FA accounts (e.g. GitHub and Coinbase) and will issue you new access tokens to your accounts entirely on device without any 3rd party servers, tracking, or off device processing. 
+AirSecure is an open-source, zero trust two factor authentication manager. The AirSecure app manages your 2FA accounts (e.g. GitHub and Coinbase) and will issue you new access tokens to your accounts entirely on device without any 3rd party servers, tracking, or off device processing.
+
+See more on Textile's [blog post](https://medium.com/textileio/airsecure-own-your-one-time-passwords-a65efd612dc6) about AirSecure.
 
 ## Currently in Beta
 
@@ -18,12 +20,13 @@ While the app runs we are taking some time to do QA and fully test the code. We 
 
 ### How it works
 
-Inside of AirSecure, each client creates a secure, on-device private wallet to store private keys to their encrypted entries. This is done using [Textile](https://github.com/textileio/textile-go/wiki) to create the wallet, encrypte the data, and manage keys on the user's behalf. Next, we will add Textile's device sync capability and remote backup capability to make secret management a bit easier for everyone. 
+Inside of AirSecure, each client creates a secure, on-device private wallet to store private keys to their encrypted entries. This is done using [Textile](https://github.com/textileio/textile-go/wiki) to create the wallet, encrypt the data, and manage keys on the user's behalf. Next, we will add Textile's device sync capability and remote backup capability to make secret management a bit easier for everyone.
 
-### TODO
+### Roadmap
 
 - Multi-device sync through end-to-end encrypted [Threads](https://medium.com/textileio/wip-textile-threads-whitepaper-just-kidding-6ce3a6624338)
 - Secure recovery through remote-device backup
+- User-configurable Textile Cafes
 
 ### Creators
 
