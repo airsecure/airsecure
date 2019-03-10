@@ -1167,7 +1167,7 @@
 				DEVELOPMENT_TEAM = 5VHA5U5FY8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
-					"$(SRCROOT)/../node_modules/@textile/go-mobile/ios/**",
+					"$(SRCROOT)/../node_modules/@textile/go-mobile/dist/ios/**",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1182,7 +1182,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../node_modules/@textile/go-mobile/ios",
+					"$(SRCROOT)/../node_modules/@textile/go-mobile/dist/ios",
 					"\"$(SRCROOT)/AirSecure\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1207,7 +1207,7 @@
 				DEVELOPMENT_TEAM = 5VHA5U5FY8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
-					"$(SRCROOT)/../node_modules/@textile/go-mobile/ios/**",
+					"$(SRCROOT)/../node_modules/@textile/go-mobile/dist/ios/**",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1222,7 +1222,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../node_modules/@textile/go-mobile/ios",
+					"$(SRCROOT)/../node_modules/@textile/go-mobile/dist/ios",
 					"\"$(SRCROOT)/AirSecure\"",
 				);
 				OTHER_LDFLAGS = (

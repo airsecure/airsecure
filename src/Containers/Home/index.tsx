@@ -208,7 +208,11 @@ class Home extends Component<Props> {
 }
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  apps: state.main.authenticatedApps,
+  apps: [...state.main.authenticatedApps].sort((a, b) => {
+    if (a.issuer < b.issuer) { return -1 }
+    if (a.issuer > b.issuer) { return 1 }
+    return 0
+  }),
   showDialog: state.main.issuerRequest
 })
 

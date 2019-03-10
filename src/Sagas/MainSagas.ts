@@ -1,13 +1,63 @@
 import { takeLatest, takeEvery, call, put, select, delay, take } from 'redux-saga/effects'
 import { ActionType, getType } from 'typesafe-actions'
 import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
-import Textile, { ThreadInfo, ThreadFilesInfo, ThreadType, ThreadSharing, SchemaType, FileData } from '@textile/react-native-sdk'
+import { pb, API } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import { Alert } from 'react-native'
-import * as JSON_SCHEMA from '../schema.json'
 import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
 const jsotp = require('jsotp')
+
+const JSON_SCHEMA = {
+  name: 'otp',
+  pin: true,
+  mill: '/json',
+  json_schema: {
+    title: 'OTP',
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string',
+        description: 'Valid types are hotp and totp, to distinguish whether the key will be used for counter-based HOTP or for TOTP.',
+        enum: ['hotp', 'totp']
+        },
+      user: {
+        type: 'string',
+        description: 'The unique client ID'
+        },
+      issuer: {
+        type: 'string',
+        description: 'The unique provider ID'
+        },
+      secret: {
+        description: 'The Base32 encoded random bytes secret key',
+        type: 'string'
+        },
+      algorithm: {
+        type: 'string',
+        description: 'Hash algorithm',
+        enum: ['sha1', 'sha256', 'sha512']
+        },
+      digits: {
+        type: 'number',
+        description: 'The digits parameter may have the values 6 or 8, and determines how long of a one-time passcode to display to the user. The default is 6.'
+        },
+      counter: {
+        type: 'number',
+        description: 'The counter parameter is required when provisioning a key for use with HOTP. It will set the initial counter value.'
+        },
+      period: {
+        type: 'number',
+        description: 'The period parameter defines a period that a TOTP code will be valid for, in seconds. The default value is 30.'
+        },
+      logoUrl: {
+        type: 'string',
+        description: 'Logo of account'
+        }
+      },
+    required: ['user', 'secret']
+    }
+  }
 
 // watcher saga: watches for actions dispatched to the store, starts worker saga
 export function* mainSagaInit() {
@@ -45,36 +95,69 @@ export function * handleCountdown(action: ActionType<typeof MainActions.toggleCo
   } while (!item.hidden)
 }
 
-export function * nodeStarted() {
+function * getOrCreateThread() {
   const APP_THREAD_NAME = 'authenticated_apps'
   const APP_THREAD_KEY = 'ABCIDEASLKD'
-  const threads: ReadonlyArray<ThreadInfo> = yield call(Textile.threads)
-  let target = threads.find((thread: ThreadInfo) => thread.key === APP_THREAD_KEY)
-  if (!target) {
-    target = yield call(Textile.addThread, APP_THREAD_KEY, APP_THREAD_NAME, ThreadType.PRIVATE, ThreadSharing.NOT_SHARED, [], SchemaType.JSON, JSON.stringify(JSON_SCHEMA))
+  try {
+    const threads: pb.ThreadList = yield call(API.threads.list)
+    const target = threads.items.find((thread: pb.IThread) => thread.key === APP_THREAD_KEY)
+    if (!target) {
+      throw new Error('No thread found')
+    }
+    yield put(MainActions.getThreadSuccess(target))
+  } catch (err) {
+    console.log('axh create')
+    const schema = pb.AddThreadConfig.Schema.create()
+    schema.json = JSON.stringify(JSON_SCHEMA)
+    const config = pb.AddThreadConfig.create()
+    config.key = APP_THREAD_KEY
+    config.name = APP_THREAD_NAME
+    config.type = pb.Thread.Type.PRIVATE
+    config.sharing = pb.Thread.Sharing.NOT_SHARED
+    config.schema = schema
+
+    const newTarget: pb.IThread = yield call(API.threads.add, config)
+    yield put(MainActions.getThreadSuccess(newTarget))
   }
-  yield put(MainActions.getThreadSuccess(target))
 }
 
-function * refreshThreads(target: ThreadInfo) {
-  const blocks: ReadonlyArray<ThreadFilesInfo> = yield call(Textile.threadFiles, '', 100, target.id)
+export function * nodeStarted() {
+  yield call(getOrCreateThread)
+}
 
-  const files: Array<{file: FileData, blockId: string}> = []
-  for (const block of blocks) {
-    if (block.files.length && block.files[0].file) {
-      const file = yield call(Textile.fileData, block.files[0].file.hash)
-      files.push({
-        file,
-        blockId: block.block
-      })
+export function * refreshThreads() {
+  const appThread = yield select(MainSelectors.getAppThread)
+  const apps: any[] = []
+  try {
+    const posts = yield call(API.files.list, '', -1, appThread.id)
+    const rows: Array<{hash: string, block: string}> = []
+    for (const post of posts.items) {
+      for (const entry of post.files) {
+        rows.push({
+          hash: entry.file.hash,
+          block: post.block
+        })
+      }
     }
+    for (const entry of rows) {
+      try {
+        const data: string = yield call(API.files.data, entry.hash)
+        const buff = Buffer.from(data.split(',')[1], 'base64')
+        const json = JSON.parse(buff.toString())
+        const app: AuthenticatedApp = {
+          ...json,
+          blockId: entry.block
+        }
+        apps.push(app)
+      } catch (err) {
+        // console.log('file error', err.message)
+      }
+    }
+  } catch (err) {
+    // console.log('files error', err.message)
+  } finally {
+    yield put(MainActions.getAppsSuccess(apps))
   }
-  const apps = files.map((data) => {
-    const dir = JSON.parse(Buffer.from(data.file.url.split(',')[1], 'base64').toString())
-    dir['blockId'] = data.blockId
-    return dir
-  })
-  yield put(MainActions.getAppsSuccess(apps))
 }
 
 export function * deleteApp(action: ActionType<typeof MainActions.deleteApp>) {
@@ -83,15 +166,13 @@ export function * deleteApp(action: ActionType<typeof MainActions.deleteApp>) {
   if (!item) {
     return
   }
-  yield call(Textile.addThreadIgnore, item.blockId)
-  const target = yield select(MainSelectors.getAppThread)
-  yield call(refreshThreads, target)
+  yield call(API.ignores.add, item.blockId)
+  yield call(refreshThreads)
 }
 
 export function * getAuthenticatedApps(action: ActionType<typeof MainActions.getThreadSuccess>) {
   if (action.payload.appThread) {
-    const target = action.payload.appThread
-    yield call(refreshThreads, target)
+    yield call(refreshThreads)
   }
 }
 
@@ -153,16 +234,15 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
   }
   const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {
-   yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
-   const result = yield call(Textile.prepareFilesAsync, path, appThread.id)
-   yield call(RNFS.unlink, path)
-
-   const dir = result.dir
-   if (!dir) {
-     return
-   }
-   yield call(Textile.addThreadFiles, dir, appThread.id)
-   yield call(refreshThreads, appThread)
+    yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
+    const result = yield call(API.files.prepare, path, appThread.id)
+    yield call(RNFS.unlink, path)
+    const dir = result.dir
+    if (!dir) {
+      return
+    }
+    yield call(API.files.add, dir, appThread.id)
+    yield call(refreshThreads)
   } catch (err) {
     // pass
   }
