@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@textile/react-native-sdk": "1.1.0-rc35",
+    "@textile/react-native-sdk": "1.1.0-rc45",
     "buffer": "^5.2.1",
     "jsotp": "^1.0.4",
     "jssha": "^2.3.1",

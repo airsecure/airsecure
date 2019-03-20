@@ -4,7 +4,6 @@ import MainActions, {MainSelectors, AuthenticatedApp} from '../Redux/MainRedux'
 import { pb, API } from '@textile/react-native-sdk'
 import parseUrl from 'url-parse'
 import { Alert } from 'react-native'
-import * as RNFS from 'react-native-fs'
 import { Buffer } from 'buffer'
 const jsotp = require('jsotp')
 
@@ -106,7 +105,6 @@ function * getOrCreateThread() {
     }
     yield put(MainActions.getThreadSuccess(target))
   } catch (err) {
-    console.log('axh create')
     const schema = pb.AddThreadConfig.Schema.create()
     schema.json = JSON.stringify(JSON_SCHEMA)
     const config = pb.AddThreadConfig.create()
@@ -232,16 +230,23 @@ export function * parseNewCode(action: ActionType<typeof MainActions.scanNewQRCo
     // don't duplicate entries
     return
   }
-  const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
+  // const path = RNFS.DocumentDirectoryPath + '/' + fakeUUID() + '.json'
   try {
-    yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
-    const result = yield call(API.files.prepare, path, appThread.id)
-    yield call(RNFS.unlink, path)
-    const dir = result.dir
-    if (!dir) {
-      return
-    }
-    yield call(API.files.add, dir, appThread.id)
+
+    const input = Buffer.from(JSON.stringify(file)).toString('base64')
+    const result = yield call(API.files.prepareFiles, input, appThread.id)
+
+    yield call(API.files.add, result.dir, appThread.id)
+
+
+    // yield call(RNFS.writeFile, path, JSON.stringify(file), 'utf8')
+    // const result = yield call(API.files.prepare, path, appThread.id)
+    // yield call(RNFS.unlink, path)
+    // const dir = result.dir
+    // if (!dir) {
+    //   return
+    // }
+    // yield call(API.files.add, dir, appThread.id)
     yield call(refreshThreads)
   } catch (err) {
     // pass
